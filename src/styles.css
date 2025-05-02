@@ -1,0 +1,21 @@
+/* Reset global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4; /* Fondo uniforme */
+    color: #333; /* Color de texto general */
+    display: flex;
+    flex-direction: column; /* Evita conflictos de alineación */
+}
+
+/* Contenedores principales */
+app-root {
+    display: flex;
+    min-height: 100vh; /* Evita que el contenido se desborde */
+    flex-direction: row;
+}

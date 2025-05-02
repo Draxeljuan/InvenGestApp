@@ -1,0 +1,13 @@
+<router-outlet></router-outlet>
+
+<!-- Modal de Cierre de Sesión -->
+<div class="logout-modal" *ngIf="logoutService.modalState$ | async">
+    <div class="modal-content">
+        <h2>Confirmar Cierre de Sesión</h2>
+        <p>¿Estás seguro de que quieres cerrar sesión?</p>
+        <div class="modal-actions">
+            <button class="cancel-btn" (click)="logoutService.closeModal()">Cancelar</button>
+            <button class="confirm-btn" (click)="logoutService.confirmLogout()">Cerrar Sesión</button>
+        </div>
+    </div>
+</div>

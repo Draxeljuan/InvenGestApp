@@ -1,0 +1,64 @@
+<div class="sidebar">
+    <div class="logo">
+        <h2>InvenGest Admin</h2>
+    </div>
+    <nav class="menu">
+        <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
+            <span>📦 Inventario</span>
+        </div>
+        <div class="menu-item" routerLink="/movimientos-inventario" routerLinkActive="active">
+            <span>🔄 Mov. Inventario</span>
+        </div>
+        <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
+            <span>📊 Reportes</span>
+        </div>
+        <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
+            <span>💰 Ventas</span>
+        </div>
+        <div class="menu-item" routerLink="/historial-ventas" routerLinkActive="active">
+            <span>📜 Historial Ventas</span>
+        </div>
+        <div class="menu-item" routerLink="/admin-dashboard" routerLinkActive="active">
+            <span>🔍 Buscar Producto</span>
+        </div>
+        <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
+            <span>🔔 Alertas</span>
+        </div>
+        <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
+            <span>👤 Perfil</span>
+        </div>
+        <div class="menu-item logout-btn" (click)="logoutService.openModal()">
+            <span>📤 Cerrar sesión</span>
+        </div>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Generación de Reportes</h1>
+    </div>
+
+    <div class="report-options">
+        <h2>Tipo de Reporte</h2>
+        <div class="report-selection">
+            <label>
+                <input type="radio" name="reportType" value="ventas" />
+                Reporte de Ventas
+            </label>
+            <label>
+                <input type="radio" name="reportType" value="inventario" />
+                Reporte de Inventario
+            </label>
+        </div>
+
+        <h2>Rango de Fechas</h2>
+        <div class="date-selection">
+            <label for="startDate">Inicio:</label>
+            <input type="date" id="startDate" />
+            <label for="endDate">Fin:</label>
+            <input type="date" id="endDate" />
+        </div>
+
+        <button class="generate-btn">Generar Reporte</button>
+    </div>
+</div>

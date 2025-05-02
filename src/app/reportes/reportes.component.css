@@ -1,0 +1,138 @@
+/* Reset de estilos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    background-color: #eef2f3; /* Color más suave para la página */
+}
+
+/* Barra lateral */
+.sidebar {
+    width: 230px; /* Tamaño ajustado para mantener proporción */
+    background-color: #1e293b;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Ocupa toda la pantalla */
+}
+
+.logo h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #334155;
+    padding-bottom: 10px;
+    color: #ffffff;
+}
+
+.menu {
+    margin-top: 20px;
+}
+
+.menu-item {
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    border-radius: 6px;
+}
+
+.menu-item:hover {
+    background-color: #475569;
+}
+
+.menu-item.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Contenido principal */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+/* Opciones de Reportes */
+.report-options {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.report-selection label {
+    display: block;
+    padding: 10px;
+    font-size: 1rem;
+    background: #f8fafc;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.report-selection label:hover {
+    background-color: #e2e8f0;
+}
+
+.date-selection {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.generate-btn {
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.generate-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Anfitrión del componente */
+:host {
+    display: flex;
+    width: 100%;
+    height: 100vh; /* Ocupa toda la vista */
+}

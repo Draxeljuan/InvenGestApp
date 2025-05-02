@@ -1,0 +1,50 @@
+<div class="sidebar">
+    <div class="logo">
+        <h2>InvenGest Admin</h2>
+    </div>
+    <nav class="menu">
+        <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
+            <span>📦 Inventario</span>
+        </div>
+        <div class="menu-item" routerLink="/movimientos-inventario" routerLinkActive="active">
+            <span>🔄 Mov. Inventario</span>
+        </div>
+        <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
+            <span>📊 Reportes</span>
+        </div>
+        <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
+            <span>💰 Ventas</span>
+        </div>
+        <div class="menu-item" routerLink="/historial-ventas" routerLinkActive="active">
+            <span>📜 Historial Ventas</span>
+        </div>
+        <div class="menu-item" routerLink="/admin-dashboard" routerLinkActive="active">
+            <span>🔍 Buscar Producto</span>
+        </div>
+        <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
+            <span>🔔 Alertas</span>
+        </div>
+        <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
+            <span>👤 Perfil</span>
+        </div>
+        <div class="menu-item logout-btn" (click)="logoutService.openModal()">
+            <span>📤 Cerrar sesión</span>
+        </div>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Alertas Actuales</h1>
+    </div>
+
+    <div class="alert-list">
+        <div class="alert-item" *ngFor="let alerta of alertas">
+            <h3>Alerta {{ alerta.tipo }}</h3>
+            <p><strong>ID Producto:</strong> {{ alerta.idProducto }}</p>
+            <p><strong>Fecha:</strong> {{ alerta.fecha }}</p>
+            <p><strong>Tipo:</strong> {{ alerta.tipo }}</p>
+            <p><strong>Leída:</strong> {{ alerta.leida ? 'Sí' : 'No' }}</p>
+        </div>
+    </div>
+</div>

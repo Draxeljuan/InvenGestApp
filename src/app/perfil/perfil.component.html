@@ -1,0 +1,67 @@
+<div class="sidebar">
+    <div class="logo">
+        <h2>InvenGest Admin</h2>
+    </div>
+    <nav class="menu">
+        <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
+            <span>📦 Inventario</span>
+        </div>
+        <div class="menu-item" routerLink="/movimientos-inventario" routerLinkActive="active">
+            <span>🔄 Mov. Inventario</span>
+        </div>
+        <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
+            <span>📊 Reportes</span>
+        </div>
+        <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
+            <span>💰 Ventas</span>
+        </div>
+        <div class="menu-item" routerLink="/historial-ventas" routerLinkActive="active">
+            <span>📜 Historial Ventas</span>
+        </div>
+        <div class="menu-item" routerLink="/admin-dashboard" routerLinkActive="active">
+            <span>🔍 Buscar Producto</span>
+        </div>
+        <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
+            <span>🔔 Alertas</span>
+        </div>
+        <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
+            <span>👤 Perfil</span>
+        </div>
+        <div class="menu-item logout-btn" (click)="logoutService.openModal()">
+            <span>📤 Cerrar sesión</span>
+        </div>
+    </nav>
+</div>  
+
+<div class="main-content">
+    <div class="header">
+        <h1>Información del Usuario</h1>
+    </div>
+
+    <div class="user-info">
+        <div class="info-item">
+            <strong>Nombre:</strong>
+            <span>{{ usuario?.nombre }}</span> <!-- 🔥 Evita errores si usuario aún no está definido -->
+        </div>
+        <div class="info-item">
+            <strong>Nombre de Usuario:</strong>
+            <span>{{ usuario?.nombreUsuario }}</span>
+        </div>
+        <div class="info-item">
+            <strong>Rol:</strong>
+            <span>{{ usuario?.rolUsuario }}</span>
+        </div>
+        <div class="info-item">
+            <strong>Correo Electrónico:</strong>
+            <span>{{ usuario?.email }}</span>
+        </div>
+        <div class="info-item">
+            <strong>Teléfono:</strong>
+            <span>{{ usuario?.telefono }}</span>
+        </div>
+        <div class="info-item">
+            <strong>Último Acceso:</strong>
+            <span>{{ usuario?.ultimoAcceso | date:'dd/MM/yyyy - HH:mm' }}</span>
+        </div>
+    </div>
+</div>

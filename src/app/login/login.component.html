@@ -1,0 +1,12 @@
+<div class="login-container">
+  <h2>Iniciar Sesión</h2>
+  <form (submit)="onSubmit()">
+      <label for="username">Usuario:</label>
+      <input type="text" id="username" [(ngModel)]="nombreUsuario" name="username" required>
+
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" [(ngModel)]="contrasena" name="password" required>
+
+      <button type="submit">Ingresar</button>
+  </form>
+</div>

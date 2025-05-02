@@ -1,0 +1,128 @@
+/* Barra lateral */
+.sidebar {
+    width: 230px;
+    background-color: #1e293b;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.logo h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #34495e;
+    padding-bottom: 10px;
+    color: #ffffff;
+}
+
+.menu {
+    margin-top: 20px;
+}
+
+.menu-item {
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    border-radius: 6px;
+}
+
+.menu-item:hover {
+    background-color: #475569;
+}
+
+.menu-item.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Contenido principal */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background-color: #eef2f3;
+}
+
+.header h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #1e293b;
+}
+
+/* Tabs */
+.tab-container {
+    margin-top: 20px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tab-btn:hover {
+    background-color: #0056b3;
+}
+
+.tab-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.form-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Anfitrión del componente */
+:host {
+    display: flex;
+    width: 100%;
+    height: 100vh; /* Ocupa toda la vista */
+}
