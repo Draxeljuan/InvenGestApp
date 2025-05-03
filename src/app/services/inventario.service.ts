@@ -28,9 +28,15 @@ export class InventarioService {
     return this.http.put<any>(`${this.apiUrl}/${id}`, producto, this.getHeaders());
   }
 
-  descontinuarProducto(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`, this.getHeaders());
+  /** Nuevo método para buscar productos por nombre */
+  buscarProductosPorNombre(nombre: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?nombre=${nombre}`, this.getHeaders());
   }
+
+  /**Descontinuar productos debe actualizar su estado en lugar de eliminarlo */
+  descontinuarProducto(id: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/descontinuar/${id}`, {}, this.getHeaders()); // Estado "Descontinuado"
+}
 
   obtenerCategorias(): Observable<any[]> {
     return this.http.get<any[]>(this.categoriaUrl, this.getHeaders());

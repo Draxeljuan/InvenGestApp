@@ -106,31 +106,116 @@
 
         <div class="tab-content" *ngIf="activeTab === 'update'">
             <h2>Actualizar Producto</h2>
-            <form (submit)="actualizarProducto()">
+        
+            <div class="form-group">
+                <label for="search-product">Buscar Producto</label>
+                <input type="text" id="search-product" [(ngModel)]="terminoBusqueda" name="terminoBusqueda" (input)="buscarProducto()">
+            </div>
+        
+            <div class="search-results" *ngIf="productosFiltrados.length > 0">
+                <p>Resultados encontrados:</p>
+                <ul class="scrollable-list">
+                    <li *ngFor="let producto of productosFiltrados.slice(0, 5)" 
+                        [ngClass]="{'selected-product': producto.idProducto === productoActualizado?.idProducto}"
+                        (click)="seleccionarProducto(producto)">
+                        {{ producto.nombre }} (ID: {{ producto.idProducto }})
+                    </li>
+                </ul>
+            </div>
+        
+            <form (submit)="actualizarProducto()" *ngIf="productoActualizado">
                 <div class="form-group">
                     <label for="update-id">ID del Producto</label>
-                    <input type="text" id="update-id" [(ngModel)]="productoActualizado.id" name="update">
+                    <input type="text" id="update-id" [(ngModel)]="productoActualizado.idProducto" name="updateId" readonly>
                 </div>
+        
                 <div class="form-group">
-                    <label for="update-price">Nuevo Precio</label>
-                    <input type="number" id="update-price" [(ngModel)]="productoActualizado.precioVenta" name="precio">
+                    <label for="update-name">Nombre del Producto</label>
+                    <input type="text" id="update-name" [(ngModel)]="productoActualizado.nombre" name="nombre">
                 </div>
+        
                 <div class="form-group">
-                    <label for="update-stock">Nuevo Stock</label>
-                    <input type="number" id="update-stock" [(ngModel)]="productoActualizado.stock" name="nuevoStock">
+                    <label for="update-category">Categoría</label>
+                    <select id="update-category" [(ngModel)]="productoActualizado.idCategoria" name="idCategoria">
+                        <option *ngFor="let categoria of categorias" [value]="categoria.idCategoria">{{ categoria.nombre }}</option>
+                    </select>
                 </div>
+        
+                <div class="form-group">
+                    <label for="update-price">Precio de Venta</label>
+                    <input type="number" id="update-price" [(ngModel)]="productoActualizado.precioVenta" name="precioVenta">
+                </div>
+        
+                <div class="form-group">
+                    <label for="update-cost">Costo de Compra</label>
+                    <input type="number" id="update-cost" [(ngModel)]="productoActualizado.costoCompra" name="costoCompra">
+                </div>
+        
+                <div class="form-group">
+                    <label for="update-stock">Stock</label>
+                    <input type="number" id="update-stock" [(ngModel)]="productoActualizado.stock" name="stock" (input)="calcularEstadoActualizado()">
+                </div>
+        
+                <div class="form-group">
+                    <label for="update-location">Ubicación</label>
+                    <input type="text" id="update-location" [(ngModel)]="productoActualizado.ubicacion" name="ubicacion">
+                </div>
+        
+                <div class="form-group">
+                    <label for="update-date">Fecha de Ingreso</label>
+                    <input type="date" id="update-date" [(ngModel)]="productoActualizado.fechaIngreso" name="fechaIngreso">
+                </div>
+        
+                <div class="form-group">
+                    <label>Estado del Producto</label>
+                    <p>{{ productoActualizado.estado }}</p>
+                </div>
+        
                 <button type="submit" class="form-btn">Actualizar</button>
             </form>
         </div>
 
         <div class="tab-content" *ngIf="activeTab === 'discontinue'">
             <h2>Descontinuar Producto</h2>
-            <form (submit)="descontinuarProducto()">
+        
+            <div class="form-group">
+                <label for="search-product">Buscar Producto</label>
+                <input type="text" id="search-product" [(ngModel)]="terminoBusqueda" name="terminoBusqueda" (input)="buscarProducto()">
+            </div>
+        
+            <div class="search-results" *ngIf="productosFiltrados.length > 0">
+                <p>Resultados encontrados:</p>
+                <ul class="scrollable-list">
+                    <li *ngFor="let producto of productosFiltrados.slice(0, 5)" 
+                        [ngClass]="{'selected-product': producto.idProducto === productoSeleccionado?.idProducto}"
+                        (click)="seleccionarProductoParaDescontinuar(producto)">
+                        {{ producto.nombre }} (ID: {{ producto.idProducto }})
+                    </li>
+                </ul>
+            </div>
+        
+            <form (submit)="confirmarDescontinuacion()" *ngIf="productoSeleccionado">
                 <div class="form-group">
-                    <label for="discontinue-id">ID del Producto</label>
-                    <input type="text" id="discontinue-id" [(ngModel)]="productoDescontinuado" name="descontinuado">
+                    <label>ID del Producto</label>
+                    <input type="text" [(ngModel)]="productoSeleccionado.idProducto" name="idProducto" readonly>
                 </div>
-                <button type="submit" class="form-btn">Descontinuar</button>
+        
+                <div class="form-group">
+                    <label>Nombre del Producto</label>
+                    <input type="text" [(ngModel)]="productoSeleccionado.nombre" name="nombre" readonly>
+                </div>
+        
+                <div class="form-group">
+                    <label>Stock Actual</label>
+                    <input type="number" [(ngModel)]="productoSeleccionado.stock" name="stock" readonly>
+                </div>
+        
+                <div class="form-group">
+                    <label>Estado Actual</label>
+                    <p>{{ productoSeleccionado.estado }}</p>
+                </div>
+        
+                <button type="submit" class="form-btn">Confirmar Descontinuación</button>
             </form>
         </div>
     </div>

@@ -120,6 +120,59 @@
     background-color: #0056b3;
 }
 
+/* Estilos Cuadro Busqueda */
+.search-results {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.search-results ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.search-results li {
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-results li:hover {
+    background-color: #e3e3e3;
+}
+
+.scrollable-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.scrollable-list li {
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid #ddd;
+}
+
+.scrollable-list li:hover {
+    background-color: #e3e3e3;
+}
+
+.selected-product {
+    background-color: #c8e6c9; /* Resalta el producto seleccionado */
+    font-weight: bold;
+}
+
+
 /* Anfitrión del componente */
 :host {
     display: flex;

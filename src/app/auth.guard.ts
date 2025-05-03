@@ -27,7 +27,7 @@ export const authGuard: CanActivateFn = (route, state) => {
       return false;
     }
 
-    // 🚫 Restringir acceso a "inventario" solo a administradores
+    // Restringir acceso a "inventario" solo a administradores
     if (route.routeConfig?.path === 'inventario' && role !== 'ROLE_ADMINISTRADOR') {
       console.warn("Acceso denegado: Solo administradores pueden ingresar a Inventario.");
       alert('⚠️ No tienes autorización para acceder a Inventario.');

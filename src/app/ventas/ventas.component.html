@@ -1,188 +1,215 @@
 <div class="sidebar">
-    <div class="logo">
-        <h2>InvenGest Admin</h2>
+  <div class="logo">
+    <h2>InvenGest Admin</h2>
+  </div>
+  <nav class="menu">
+    <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
+      <span>📦 Inventario</span>
     </div>
-    <nav class="menu">
-        <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
-            <span>📦 Inventario</span>
-        </div>
-        <div class="menu-item" routerLink="/movimientos-inventario" routerLinkActive="active">
-            <span>🔄 Mov. Inventario</span>
-        </div>
-        <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
-            <span>📊 Reportes</span>
-        </div>
-        <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
-            <span>💰 Ventas</span>
-        </div>
-        <div class="menu-item" routerLink="/historial-ventas" routerLinkActive="active">
-            <span>📜 Historial Ventas</span>
-        </div>
-        <div class="menu-item" routerLink="/admin-dashboard" routerLinkActive="active">
-            <span>🔍 Buscar Producto</span>
-        </div>
-        <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
-            <span>🔔 Alertas</span>
-        </div>
-        <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
-            <span>👤 Perfil</span>
-        </div>
-        <div class="menu-item logout-btn" (click)="logoutService.openModal()">
-            <span>📤 Cerrar sesión</span>
-        </div>
-    </nav>
+    <div
+      class="menu-item"
+      routerLink="/movimientos-inventario"
+      routerLinkActive="active"
+    >
+      <span>🔄 Mov. Inventario</span>
+    </div>
+    <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
+      <span>📊 Reportes</span>
+    </div>
+    <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
+      <span>💰 Ventas</span>
+    </div>
+    <div
+      class="menu-item"
+      routerLink="/historial-ventas"
+      routerLinkActive="active"
+    >
+      <span>📜 Historial Ventas</span>
+    </div>
+    <div
+      class="menu-item"
+      routerLink="/admin-dashboard"
+      routerLinkActive="active"
+    >
+      <span>🔍 Buscar Producto</span>
+    </div>
+    <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
+      <span>🔔 Alertas</span>
+    </div>
+    <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
+      <span>👤 Perfil</span>
+    </div>
+    <div class="menu-item logout-btn" (click)="logoutService.openModal()">
+      <span>📤 Cerrar sesión</span>
+    </div>
+  </nav>
 </div>
 
 <div class="main-content">
-    <div class="header">
-        <h1>Nueva Venta</h1>
+  <div class="header">
+    <h1>Nueva Venta</h1>
+  </div>
+
+  <!-- Sección de información del cliente -->
+  <div class="customer-info">
+    <h2 class="cart-title">Información del Cliente</h2>
+
+    <!-- Búsqueda de clientes -->
+    <div class="search-form">
+      <input
+        type="text"
+        [(ngModel)]="terminoBusquedaCliente"
+        placeholder="Buscar por nombre o apellido..."
+        (input)="buscarCliente()"
+      />
+      <button (click)="buscarCliente()">Buscar</button>
     </div>
 
-    <div class="customer-info">
-        <h2 class="cart-title">Información del Cliente</h2>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="customer-name">Nombre del Cliente</label>
-                <input type="text" id="customer-name" placeholder="Ingresa el nombre del cliente">
-            </div>
-            <div class="form-group">
-                <label for="customer-phone">Número de Teléfono</label>
-                <input type="text" id="customer-phone" placeholder="Ingresa el número de teléfono">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="customer-email">Correo Electrónico</label>
-                <input type="email" id="customer-email" placeholder="Ingresa el correo electrónico">
-            </div>
-            <div class="form-group">
-                <label for="payment-method">Método de Pago</label>
-                <select id="payment-method">
-                    <option value="cash">Efectivo</option>
-                    <option value="credit">Tarjeta de Crédito</option>
-                    <option value="debit">Tarjeta de Débito</option>
-                    <option value="online">Pago en Línea</option>
-                </select>
-            </div>
-        </div>
+    <!-- Resultados de la búsqueda -->
+    <div class="search-results" *ngIf="clientesFiltrados.length > 0">
+      <p>Clientes encontrados:</p>
+      <ul class="scrollable-list">
+        <li
+          *ngFor="let cliente of clientesFiltrados"
+          [ngClass]="{
+            'selected-product':
+              cliente.idCliente === clienteSeleccionado?.idCliente
+          }"
+          (click)="seleccionarCliente(cliente)"
+        >
+          {{ cliente.primerNombre }} {{ cliente.primerApellido }}
+        </li>
+      </ul>
     </div>
-    
-    <!-- Aquí irán más contenidos específicos -->
 
-    <div class="sales-container">
-        <div class="product-search">
-            <h2 class="cart-title">Product Search</h2>
-            <div class="search-form">
-                <input type="text" placeholder="Search by product name or ID...">
-                <button>Search</button>
-            </div>
-            <div class="product-results">
-                <div class="product-item">
-                    <div>
-                        <div><strong>Product A</strong> (ID: 001)</div>
-                        <div>Price: $29.99 | Stock: 150</div>
-                    </div>
-                    <button class="add-btn">Add to Cart</button>
-                </div>
-                <div class="product-item">
-                    <div>
-                        <div><strong>Product B</strong> (ID: 002)</div>
-                        <div>Price: $49.99 | Stock: 75</div>
-                    </div>
-                    <button class="add-btn">Add to Cart</button>
-                </div>
-                <div class="product-item">
-                    <div>
-                        <div><strong>Product C</strong> (ID: 003)</div>
-                        <div>Price: $19.99 | Stock: 200</div>
-                    </div>
-                    <button class="add-btn">Add to Cart</button>
-                </div>
-            </div>
-        </div>
+    <!-- Mostrar información del cliente seleccionado -->
+    <div *ngIf="clienteSeleccionado" class="selected-client">
+      <h3>Cliente seleccionado:</h3>
+      <p><strong>ID:</strong> {{ clienteSeleccionado.idCliente }}</p>
+      <p>
+        <strong>Nombre:</strong> {{ clienteSeleccionado.primerNombre }}
+        {{ clienteSeleccionado.primerApellido }}
+      </p>
+    </div>
+  </div>
 
-        <div class="cart-summary">
-            <h2 class="cart-title">Cart Summary</h2>
-            <div class="cart-items">
-                <div class="cart-item">
-                    <div>
-                        <div>Product A</div>
-                        <div>$29.99</div>
-                    </div>
-                    <div class="item-controls">
-                        <button class="qty-btn">-</button>
-                        <span>1</span>
-                        <button class="qty-btn">+</button>
-                        <button class="remove-btn">X</button>
-                    </div>
-                </div>
-                <div class="cart-item">
-                    <div>
-                        <div>Product B</div>
-                        <div>$49.99</div>
-                    </div>
-                    <div class="item-controls">
-                        <button class="qty-btn">-</button>
-                        <span>2</span>
-                        <button class="qty-btn">+</button>
-                        <button class="remove-btn">X</button>
-                    </div>
-                </div>
+  <!-- Aquí irán más contenidos específicos -->
+
+  <div class="sales-container">
+    <div class="product-search">
+      <h2 class="cart-title">Buscar Productos</h2>
+
+      <!-- Barra de búsqueda -->
+      <div class="search-form">
+        <input
+          type="text"
+          [(ngModel)]="terminoBusquedaProducto"
+          placeholder="Buscar por nombre o ID..."
+          (input)="buscarProducto()"
+        />
+        <button (click)="buscarProducto()">Buscar</button>
+      </div>
+
+      <!-- Resultados de búsqueda -->
+      <div class="search-results" *ngIf="productosFiltrados.length > 0">
+        <p>Productos encontrados:</p>
+        <ul class="scrollable-list">
+          <li
+            *ngFor="let producto of productosFiltrados"
+            (click)="agregarAlCarrito(producto)"
+          >
+            <strong>{{ producto.nombre }}</strong> (ID:
+            {{ producto.idProducto }}) - ${{ producto.precioVenta }} | Stock:
+            {{ producto.stock }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 🏆 Carrito de compras -->
+    <div class="cart-summary">
+      <h2 class="cart-title">Carrito de Compras</h2>
+
+      <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of carrito">
+          <div>
+            <div>
+              <strong>{{ item.nombre }}</strong>
             </div>
-            <div class="cart-summary-line">
-                <span>Subtotal:</span>
-                <span>$129.97</span>
-            </div>
-            <div class="cart-summary-line">
-                <span>Tax (10%):</span>
-                <span>$13.00</span>
-            </div>
-            <div class="cart-summary-line">
-                <span>Total:</span>
-                <span>$142.97</span>
-            </div>
-            <button class="checkout-btn">Complete Sale</button>
-            <div class="quick-actions">
-                <button class="action-btn cancel-btn">Cancel</button>
-                <button class="action-btn hold-btn">Hold</button>
-                <button class="action-btn discount-btn">Discount</button>
-            </div>
+            <div>${{ item.precioVenta }}</div>
+          </div>
+          <div class="item-controls">
+            <button class="qty-btn" (click)="cambiarCantidad(item, -1)">
+              -
+            </button>
+            <span>{{ item.cantidad }}</span>
+            <button class="qty-btn" (click)="cambiarCantidad(item, 1)">
+              +
+            </button>
+            <button class="remove-btn" (click)="removerDelCarrito(item)">
+              X
+            </button>
+          </div>
         </div>
+      </div>
+
+      <div class="cart-summary-line">
+        <span>Total:</span>
+        <span>${{ calcularSubtotal() }}</span>
+        <!-- 🔥 Total ahora es igual al subtotal -->
+      </div>
+
+      <button class="checkout-btn" (click)="confirmarVenta()">
+        Finalizar Venta
+      </button>
+    </div>
+
+    <!-- Modal de factura -->
+    <div class="modal" *ngIf="mostrarModalFactura">
+      <div class="modal-content">
+        <h2>Venta procesada exitosamente</h2>
+        <p>¿Deseas descargar la factura?</p>
+        <div class="modal-actions">
+          <button class="confirm-btn" (click)="descargarFactura()">
+            Sí, descargar
+          </button>
+          <button class="cancel-btn" (click)="cerrarModal()">No, cerrar</button>
+        </div>
+      </div>
     </div>
 
     <div class="sale-history">
-        <h2 class="cart-title">Recent Sales</h2>
-        <table class="inventory-table" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>Sale ID</th>
-                    <th>Date</th>
-                    <th>Customer</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>S001</td>
-                    <td>07/03/2025</td>
-                    <td>John Doe</td>
-                    <td>3</td>
-                    <td>$89.97</td>
-                    <td>Complete</td>
-                </tr>
-                <tr>
-                    <td>S002</td>
-                    <td>07/03/2025</td>
-                    <td>Jane Smith</td>
-                    <td>2</td>
-                    <td>$69.98</td>
-                    <td>Complete</td>
-                </tr>
-            </tbody>
-        </table>
+      <h2 class="cart-title">Recent Sales</h2>
+      <table class="inventory-table" style="width: 100%">
+        <thead>
+          <tr>
+            <th>Sale ID</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>S001</td>
+            <td>07/03/2025</td>
+            <td>John Doe</td>
+            <td>3</td>
+            <td>$89.97</td>
+            <td>Complete</td>
+          </tr>
+          <tr>
+            <td>S002</td>
+            <td>07/03/2025</td>
+            <td>Jane Smith</td>
+            <td>2</td>
+            <td>$69.98</td>
+            <td>Complete</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-
+  </div>
 </div>
