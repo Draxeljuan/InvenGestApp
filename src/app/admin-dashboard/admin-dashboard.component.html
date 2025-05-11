@@ -39,16 +39,19 @@
         <input type="text" class="search-bar" placeholder="Buscar productos..." [(ngModel)]="filtro">
     </div>
 
-    <div class="inventory-grid">
-        <div class="inventory-item" *ngFor="let producto of productosFiltrados">
-            <h3>{{ producto.nombre }}</h3>
-            <p><strong>ID:</strong> {{ producto.idProducto }}</p>
-            <p><strong>Categoría:</strong> {{ producto.idCategoria }}</p>
-            <p><strong>Precio Venta:</strong> ${{ producto.precioVenta }}</p>
-            <p><strong>Costo Compra:</strong> ${{ producto.costoCompra }}</p>
-            <p><strong>Stock:</strong> {{ producto.stock }} unidades</p>
-            <p><strong>Ubicación:</strong> {{ producto.ubicacion }}</p>
-            <p><strong>Estado:</strong> {{ producto.idEstado }}</p>
+    <!-- Contenedor con scroll -->
+    <div class="inventory-container">
+        <div class="inventory-grid">
+            <div class="inventory-item" *ngFor="let producto of productosFiltrados" [attr.data-estado]="producto.idEstado">
+                <h3>{{ producto.nombre }}</h3>
+                <p><strong>ID:</strong> {{ producto.idProducto }}</p>
+                <p><strong>Categoría:</strong> {{ producto.idCategoria }}</p>
+                <p><strong>Precio Venta:</strong> ${{ producto.precioVenta }}</p>
+                <p><strong>Costo Compra:</strong> ${{ producto.costoCompra }}</p>
+                <p><strong>Stock:</strong> {{ producto.stock }} unidades</p>
+                <p><strong>Ubicación:</strong> {{ producto.ubicacion }}</p>
+                <p><strong>Estado:</strong> {{ producto.idEstado }}</p>
+            </div>
         </div>
     </div>
 </div>

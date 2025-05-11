@@ -38,6 +38,13 @@
         <h1>Historial de Ventas</h1>
     </div>
 
+    <!-- Filtro por fecha -->
+    <div class="filtro-ventas">
+        <label>Fecha:</label>
+        <input type="date" [(ngModel)]="filtroFecha" (change)="filtrarVentas()" />
+    </div>
+
+    <!-- Lista con scroll -->
     <div class="sales-history">
         <table class="sales-table">
             <thead>
@@ -51,7 +58,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let venta of ventas">
+                <tr *ngFor="let venta of ventasFiltradas">
                     <td>{{ venta.idVenta }}</td>
                     <td>{{ venta.idUsuario }}</td>
                     <td>{{ venta.idCliente }}</td>
@@ -62,7 +69,13 @@
             </tbody>
         </table>
     </div>
-    
+
+    <!-- Mensaje si no hay resultados -->
+    <div *ngIf="ventasFiltradas.length === 0" class="no-ventas">
+        <p>No se encontraron ventas para la fecha seleccionada.</p>
+    </div>
+
+    <!-- Espacio para mostrar detalles de ventas sin afectar la lista -->
     <div class="venta-detalles" *ngIf="detallesVenta.length > 0">
         <h2>Detalles de Venta</h2>
         <table class="details-table">
@@ -78,8 +91,8 @@
                 <tr *ngFor="let detalle of detallesVenta">
                     <td>{{ detalle.idProducto }}</td>
                     <td>{{ detalle.cantidad }}</td>
-                    <td>${{ detalle.precioUnitario }}</td>
                     <td>${{ detalle.subtotal }}</td>
+                    <td>${{ detalle.precioUnitario }}</td>
                 </tr>
             </tbody>
         </table>

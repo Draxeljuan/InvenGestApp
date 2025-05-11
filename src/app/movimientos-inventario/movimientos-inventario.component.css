@@ -53,33 +53,73 @@
 }
 
 /* Tabla de Movimientos */
+/* Contenedor de la tabla con scroll */
+/* 🔥 Ajustamos el tamaño del contenedor y activamos scroll */
 .movimientos-list {
-    background: white;
+    max-height: 600px; /* 🔥 Se aumenta la altura del cuadro */
+    min-height: 400px; /* 🔥 Mantiene una buena proporción */
+    overflow-y: auto; /* 🔥 Scroll vertical */
+    border: 1px solid #ddd;
+    border-radius: 5px;
     padding: 20px;
-    border-radius: 8px;
+    background: white;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Fijamos los encabezados sin que se superpongan */
 .movimientos-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.movimientos-table th,
-.movimientos-table td {
+.movimientos-table th, .movimientos-table td {
     padding: 10px;
-    text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-.movimientos-table th {
-    background-color: #f8f9fa;
+.movimientos-table thead {
+    background-color: #f8f8f8;
     color: #333;
+    font-weight: bold;
+    position: sticky;
+    top: 0; 
+    z-index: 10; 
+}
+
+/* Ajuste para evitar superposición al hacer scroll */
+.movimientos-table th {
+    background-color: #f8f9fa; 
+    border-bottom: 2px solid #aaa; 
+    padding: 12px;
+    text-align: left;
+}
+
+/* Filtros */
+.filtros {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filtros label {
     font-weight: bold;
 }
 
-.movimientos-table tbody tr:hover {
-    background-color: #f1f1f1;
+.filtros input, .filtros select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Mensaje cuando no hay movimientos */
+.no-movimientos {
+    text-align: center;
+    font-weight: bold;
+    color: #d9534f;
+    padding: 10px;
+    border: 1px solid #d9534f;
+    border-radius: 5px;
+    background-color: #f9d6d5;
 }
 
 :host {

@@ -38,6 +38,21 @@
         <h1>Movimientos de Inventario</h1>
     </div>
 
+    <!-- Filtros -->
+    <div class="filtros">
+        <label>Fecha:</label>
+        <input type="date" [(ngModel)]="filtroFecha" (change)="filtrarMovimientos()" />
+        
+        <label>Tipo Movimiento:</label>
+        <select [(ngModel)]="filtroTipo" (change)="filtrarMovimientos()">
+            <option value="">Todos</option>
+            <option value="1">Entrada</option>
+            <option value="2">Salida</option>
+            <option value="3">Ajuste</option>
+        </select>
+    </div>
+
+    <!-- Tabla con scroll -->
     <div class="movimientos-list">
         <table class="movimientos-table">
             <thead>
@@ -52,7 +67,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let movimiento of movimientos">
+                <tr *ngFor="let movimiento of movimientosFiltrados">
                     <td>{{ movimiento.idMovimientoInventario }}</td>
                     <td>{{ movimiento.idProducto }}</td>
                     <td>{{ movimiento.idUsuario }}</td>
@@ -66,5 +81,10 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <!-- Mensaje cuando no hay resultados -->
+    <div *ngIf="movimientosFiltrados.length === 0" class="no-movimientos">
+        <p>No se encontraron movimientos para los filtros seleccionados.</p>
     </div>
 </div>

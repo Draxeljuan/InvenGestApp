@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './inventario.component.css'
 })
 export class InventarioComponent implements OnInit {
-  
+
   /** Tab Activa */
   activeTab: string = 'register';
 
@@ -21,14 +21,15 @@ export class InventarioComponent implements OnInit {
   nuevoProducto: any = { stock: 0, idCategoria: null, estado: '' };
   productoActualizado: any = null;
   productoDescontinuado: string = '';
+  fechaIngresoInvalida: boolean = false;
 
   /** Gestión de Categorías */
   categorias: any[] = [];
   nuevaCategoria: any = { nombre: '', descripcion: '' };
-  mostrarFormularioCategoria: boolean = false; 
+  mostrarFormularioCategoria: boolean = false;
 
   /** Gestión de Estados */
-  estados: any[] = []; 
+  estados: any[] = [];
 
   /** Búsqueda de Productos */
   terminoBusqueda: string = '';
@@ -40,7 +41,7 @@ export class InventarioComponent implements OnInit {
     public logoutService: LogoutService,
     public router: Router,
     private inventarioService: InventarioService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarCategorias();
@@ -76,7 +77,7 @@ export class InventarioComponent implements OnInit {
       next: () => {
         alert("Categoría creada correctamente!");
         this.cargarCategorias();
-        this.nuevaCategoria = { nombre: '', descripcion: '' }; 
+        this.nuevaCategoria = { nombre: '', descripcion: '' };
       },
       error: (err) => console.error("Error al registrar la nueva categoría:", err)
     });
@@ -105,45 +106,74 @@ export class InventarioComponent implements OnInit {
 
   /** Registrar Producto */
   registrarProducto(): void {
+    // Validación de campos requeridos
+    if (!this.nuevoProducto.nombre || !this.nuevoProducto.idCategoria ||
+      !this.nuevoProducto.precioVenta || !this.nuevoProducto.costoCompra ||
+      !this.nuevoProducto.stock || !this.nuevoProducto.ubicacion ||
+      !this.nuevoProducto.fechaIngreso) {
+
+      alert("⚠ Todos los campos son obligatorios. Completa la información antes de continuar.");
+      return;
+    }
+
+    // Validación de fecha de ingreso
+    const fechaSeleccionada = new Date(this.nuevoProducto.fechaIngreso);
+    const fechaActual = new Date();
+
+    if (fechaSeleccionada > fechaActual) {
+      alert("⚠ La fecha de ingreso no puede estar en el futuro.");
+      return;
+    }
+
+
+    // Si las validaciones pasan, registrar el producto
     this.inventarioService.registrarProducto(this.nuevoProducto).subscribe({
       next: () => {
-        alert("Producto registrado correctamente!");
-        this.nuevoProducto = {}; 
+        alert("✅ Producto registrado correctamente!");
+        this.nuevoProducto = {};
       },
-      error: (err) => console.error("Error al registrar producto:", err)
+      error: (err) => console.error("⚠ Error al registrar producto:", err)
     });
+  }
+
+  validarFechaIngreso(): void {
+    const fechaSeleccionada = new Date(this.nuevoProducto.fechaIngreso);
+    const fechaActual = new Date();
+
+    // Determina si la fecha seleccionada es mayor a la fecha actual
+    this.fechaIngresoInvalida = fechaSeleccionada > fechaActual;
   }
 
   /** Buscar Producto por ID o Nombre */
   buscarProducto(): void {
     if (this.terminoBusqueda.trim().length < 3) {
-        this.productosFiltrados = []; 
-        return; // Solo filtra si la búsqueda tiene al menos 3 caracteres
+      this.productosFiltrados = [];
+      return; // Solo filtra si la búsqueda tiene al menos 3 caracteres
     }
 
     this.inventarioService.buscarProductosPorNombre(this.terminoBusqueda).subscribe({
-        next: (productos) => {
-            this.productosFiltrados = productos.filter(producto =>
-                producto.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
-                producto.idProducto.includes(this.terminoBusqueda)
-            ).slice(0, 10); // Limita la cantidad máxima de productos visibles
-        },
-        error: (err) => console.error("Error al buscar productos:", err)
+      next: (productos) => {
+        this.productosFiltrados = productos.filter(producto =>
+          producto.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+          producto.idProducto.includes(this.terminoBusqueda)
+        ).slice(0, 10); // Limita la cantidad máxima de productos visibles
+      },
+      error: (err) => console.error("Error al buscar productos:", err)
     });
-}
+  }
 
 
 
   /** Seleccionar Producto para Actualizar */
   seleccionarProducto(producto: any): void {
     this.productoActualizado = { ...producto };
-    this.productosFiltrados = []; 
+    this.productosFiltrados = [];
   }
 
   /** Actualizar Producto */
   actualizarProducto(): void {
     if (!this.productoActualizado) return;
-    
+
     this.inventarioService.actualizarProducto(this.productoActualizado.idProducto, this.productoActualizado).subscribe({
       next: () => {
         alert("Producto actualizado correctamente!");
@@ -155,44 +185,44 @@ export class InventarioComponent implements OnInit {
   /** Descontinuar Producto */
   descontinuarProducto(): void {
     if (!this.productoSeleccionado) {
-        alert("Debe seleccionar un producto para descontinuarlo.");
-        return;
+      alert("Debe seleccionar un producto para descontinuarlo.");
+      return;
     }
 
     this.inventarioService.descontinuarProducto(this.productoSeleccionado.idProducto).subscribe({
-        next: () => {
-            alert(`Producto "${this.productoSeleccionado.nombre}" marcado como descontinuado correctamente!`);
-            this.productoSeleccionado = null;
-        },
-        error: (err) => {
-            alert("Error al descontinuar el producto. Por favor, contacte al administrador del sistema.");
-            console.error("Error en la descontinuación:", err);
-        }
+      next: () => {
+        alert(`Producto "${this.productoSeleccionado.nombre}" marcado como descontinuado correctamente!`);
+        this.productoSeleccionado = null;
+      },
+      error: (err) => {
+        alert("Error al descontinuar el producto. Por favor, contacte al administrador del sistema.");
+        console.error("Error en la descontinuación:", err);
+      }
     });
   }
 
   /** Seleccionar Producto para Descontinuar */
   seleccionarProductoParaDescontinuar(producto: any): void {
     this.productoSeleccionado = { ...producto };
-    this.productosFiltrados = []; 
+    this.productosFiltrados = [];
   }
 
   /** Confirma Descontinuacion */
   confirmarDescontinuacion(): void {
     if (!this.productoSeleccionado) {
-        alert("Debe seleccionar un producto para descontinuarlo.");
-        return;
+      alert("Debe seleccionar un producto para descontinuarlo.");
+      return;
     }
 
     this.inventarioService.descontinuarProducto(this.productoSeleccionado.idProducto).subscribe({
-        next: () => {
-            alert(`Producto "${this.productoSeleccionado.nombre}" marcado como descontinuado correctamente!`);
-            this.productoSeleccionado = null;
-        },
-        error: (err) => {
-            alert("Error al descontinuar el producto. Por favor, contacte al administrador del sistema.");
-            console.error("Error en la descontinuación:", err);
-        }
+      next: () => {
+        alert(`Producto "${this.productoSeleccionado.nombre}" marcado como descontinuado correctamente!`);
+        this.productoSeleccionado = null;
+      },
+      error: (err) => {
+        alert("Error al descontinuar el producto. Por favor, contacte al administrador del sistema.");
+        console.error("Error en la descontinuación:", err);
+      }
     });
-}
+  }
 }

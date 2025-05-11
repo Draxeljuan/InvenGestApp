@@ -4,6 +4,7 @@ import { Router, RouterModule, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AlertaService } from '../services/alerta.service';
+import { ProductoService } from '../services/producto.service';
 
 @Component({
   standalone: true,
@@ -13,34 +14,34 @@ import { AlertaService } from '../services/alerta.service';
   styleUrl: './alertas.component.css'
 })
 export class AlertasComponent implements OnInit {
-  alertas: any[] = []; // Lista de alertas obtenidas del backend
-  filtro: string = ''; // Variable para filtrar alertas por idProducto
+  alertas: any[] = [];
+  filtro: string = '';
 
   constructor(
     public logoutService: LogoutService,
     public router: Router,
-    private alertaService: AlertaService // Inyectar el servicio de alertas
-  ) {}
+    private alertaService: AlertaService
+  ) { }
 
   ngOnInit(): void {
-    this.cargarAlertas(); // Cargar alertas al iniciar el componente
+    this.limpiarYCargarAlertas(); // Primero limpiar alertas en el backend, luego cargar
+    this.cargarAlertas(); // Cargar alertas después de limpiar
   }
 
-  cargarAlertas(): void {
-    this.alertaService.obtenerAlertas().subscribe({
-      next: (data) => {
-        console.log("Alertas obtenidas:", data); // Verificar alertas en la consola
-        this.alertas = data;
-      },
-      error: (err) => {
-        console.error("Error al obtener la lista de alertas:", err);
-      }
+  limpiarYCargarAlertas(): void {
+    this.alertaService.limpiarAlertas().subscribe(() => {
+      this.cargarAlertas();
     });
   }
 
-  get alertasFiltradas() {
-    return this.alertas.filter(alerta =>
-      alerta.idProducto.toLowerCase().includes(this.filtro.toLowerCase())
-    );
+  cargarAlertas(): void {
+    this.alertaService.obtenerAlertasConProducto().subscribe(alertas => {
+      console.log("✅ Alertas activas obtenidas con nombres de productos y tipos:", alertas);
+
+      this.alertas = alertas.map(alerta => ({
+        ...alerta,
+        tipo: alerta.idTipo === 1 ? "Stock Bajo" : alerta.idTipo === 2 ? "Sin Stock" : "Desconocido" // 🔥 Convertir `idTipo` a texto
+      }));
+    });
   }
 }

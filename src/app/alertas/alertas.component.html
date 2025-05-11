@@ -40,10 +40,10 @@
 
     <div class="alert-list">
         <div class="alert-item" *ngFor="let alerta of alertas">
-            <h3>Alerta {{ alerta.tipo }}</h3>
+            <h3>⚠ {{ alerta.tipo }}</h3>  <!-- Mostrará Stock Bajo o Sin Stock -->
+            <p><strong>Producto:</strong> {{ alerta.nombreProducto }}</p>
             <p><strong>ID Producto:</strong> {{ alerta.idProducto }}</p>
             <p><strong>Fecha:</strong> {{ alerta.fecha }}</p>
-            <p><strong>Tipo:</strong> {{ alerta.tipo }}</p>
             <p><strong>Leída:</strong> {{ alerta.leida ? 'Sí' : 'No' }}</p>
         </div>
     </div>

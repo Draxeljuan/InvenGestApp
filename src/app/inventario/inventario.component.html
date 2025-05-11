@@ -40,9 +40,9 @@
 
     <div class="tab-container">
         <div class="tabs">
-            <button class="tab-btn" (click)="setActiveTab('register')">Registrar Producto</button>
-            <button class="tab-btn" (click)="setActiveTab('update')">Actualizar Producto</button>
-            <button class="tab-btn" (click)="setActiveTab('discontinue')">Descontinuar Producto</button>
+            <button class="tab-btn register" [ngClass]="{'active': activeTab === 'register'}" (click)="setActiveTab('register')">Registrar Producto</button>
+            <button class="tab-btn update" [ngClass]="{'active': activeTab === 'update'}" (click)="setActiveTab('update')">Actualizar Producto</button>
+            <button class="tab-btn discontinue" [ngClass]="{'active': activeTab === 'discontinue'}" (click)="setActiveTab('discontinue')">Descontinuar Producto</button>
         </div>
 
         <div class="tab-content" *ngIf="activeTab === 'register'">
@@ -55,19 +55,19 @@
         
                 <div class="form-group">
                     <label for="product-category">Categoría</label>
-                    <select id="product-category" [(ngModel)]="nuevoProducto.idCategoria" name="idCategoria" required>
+                    <select id="product-category" class="category-select" [(ngModel)]="nuevoProducto.idCategoria" name="idCategoria" required>
                         <option *ngFor="let categoria of categorias" [value]="categoria.idCategoria">{{ categoria.nombre }}</option>
                     </select>
-                    <button type="button" (click)="toggleFormularioCategoria()">+ Nueva Categoría</button>
+                    <button type="button" class="new-category-btn" (click)="toggleFormularioCategoria()">+ Nueva Categoría</button>
                 </div>
-        
-                <div class="form-group" *ngIf="mostrarFormularioCategoria">
+                
+                <div class="form-group new-category-container" *ngIf="mostrarFormularioCategoria">
                     <h3>Crear Nueva Categoría</h3>
                     <label for="new-category-name">Nombre</label>
                     <input type="text" id="new-category-name" [(ngModel)]="nuevaCategoria.nombre" name="categoriaNombre" required>
                     <label for="new-category-description">Descripción</label>
                     <input type="text" id="new-category-description" [(ngModel)]="nuevaCategoria.descripcion" name="categoriaDescripcion" required>
-                    <button type="button" (click)="crearNuevaCategoria()">Registrar Categoría</button>
+                    <button type="button" class="new-category-btn" (click)="crearNuevaCategoria()">Registrar Categoría</button>
                 </div>
         
                 <div class="form-group">
@@ -92,7 +92,8 @@
         
                 <div class="form-group">
                     <label for="product-date">Fecha de Ingreso</label>
-                    <input type="date" id="product-date" [(ngModel)]="nuevoProducto.fechaIngreso" name="fechaIngreso" required>
+                    <input type="date" id="product-date" [(ngModel)]="nuevoProducto.fechaIngreso" name="fechaIngreso" required (change)="validarFechaIngreso()">
+                    <p *ngIf="fechaIngresoInvalida" class="error-msg">⚠ La fecha no puede estar en el futuro.</p>
                 </div>
         
                 <div class="form-group">
@@ -136,7 +137,7 @@
         
                 <div class="form-group">
                     <label for="update-category">Categoría</label>
-                    <select id="update-category" [(ngModel)]="productoActualizado.idCategoria" name="idCategoria">
+                    <select id="update-category" class="category-select" [(ngModel)]="productoActualizado.idCategoria" name="idCategoria">
                         <option *ngFor="let categoria of categorias" [value]="categoria.idCategoria">{{ categoria.nombre }}</option>
                     </select>
                 </div>

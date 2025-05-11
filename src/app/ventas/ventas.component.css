@@ -251,6 +251,11 @@ body {
     margin-top: 20px;
 }
 
+.sale-history th {
+    
+    text-align: left;
+}
+
 .customer-info {
     background: white;
     border-radius: 8px;
@@ -365,8 +370,82 @@ body {
     font-size: 16px;
 }
 
+/* Estilos para el botón de agregar cliente */
+/* Estilos para el mensaje de "No se encontraron clientes" */
+.no-clientes {
+    color: #d9534f; /* Rojo suave para destacar */
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #d9534f;
+    border-radius: 5px;
+    background-color: #f9d6d5; /* Fondo más claro para contraste */
+}
+
+/* Estilos para el botón "Crear Cliente Nuevo" */
+.crear-cliente-nuevo {
+    background-color: #5cb85c; /* Verde positivo */
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block; /* Centrado */
+    margin: 10px auto;
+    transition: 0.3s ease-in-out;
+}
+
+.crear-cliente-nuevo:hover {
+    background-color: #4cae4c; /* Efecto visual al pasar el mouse */
+}
+
+/* Estilos para el formulario de cliente */
+.formulario-cliente {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.formulario-cliente label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.formulario-cliente input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.formulario-cliente button {
+    background-color: #0275d8; /* Azul atractivo */
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s ease-in-out;
+}
+
+.formulario-cliente button:hover {
+    background-color: #025aa5; /* Efecto hover */
+}
+
 /* Estilos para el Modal de Factura */
-/* 🔥 Estilos para el modal */
+/* Estilos para el modal */
 .modal {
     position: fixed;
     top: 50%;

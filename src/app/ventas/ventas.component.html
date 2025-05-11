@@ -82,7 +82,35 @@
       </ul>
     </div>
 
-    <!-- Mostrar información del cliente seleccionado -->
+    <!-- Opción para crear cliente si no hay resultados -->
+    <!-- Sección cuando no hay clientes -->
+    <div
+      *ngIf="
+        clientesFiltrados.length === 0 &&
+        terminoBusquedaCliente.trim().length >= 3
+      "
+      class="no-clientes"
+    >
+      <p>No se encontraron clientes.</p>
+      <button
+        class="crear-cliente-nuevo"
+        (click)="mostrarFormularioNuevoCliente()"
+      >
+        Crear Cliente Nuevo
+      </button>
+    </div>
+
+    <!-- Formulario para registrar un nuevo cliente -->
+    <div *ngIf="mostrarFormularioCliente" class="formulario-cliente">
+      <h3>Registrar Nuevo Cliente</h3>
+      <label>Nombre:</label>
+      <input type="text" [(ngModel)]="nuevoCliente.primerNombre" />
+      <label>Apellido:</label>
+      <input type="text" [(ngModel)]="nuevoCliente.primerApellido" />
+      <button (click)="registrarCliente()">Registrar</button>
+    </div>
+
+    <!-- Información del cliente seleccionado -->
     <div *ngIf="clienteSeleccionado" class="selected-client">
       <h3>Cliente seleccionado:</h3>
       <p><strong>ID:</strong> {{ clienteSeleccionado.idCliente }}</p>
@@ -179,37 +207,25 @@
     </div>
 
     <div class="sale-history">
-      <h2 class="cart-title">Recent Sales</h2>
+      <h2 class="cart-title">Ventas Recientes</h2>
       <table class="inventory-table" style="width: 100%">
-        <thead>
-          <tr>
-            <th>Sale ID</th>
-            <th>Date</th>
-            <th>Customer</th>
-            <th>Items</th>
-            <th>Total</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>S001</td>
-            <td>07/03/2025</td>
-            <td>John Doe</td>
-            <td>3</td>
-            <td>$89.97</td>
-            <td>Complete</td>
-          </tr>
-          <tr>
-            <td>S002</td>
-            <td>07/03/2025</td>
-            <td>Jane Smith</td>
-            <td>2</td>
-            <td>$69.98</td>
-            <td>Complete</td>
-          </tr>
-        </tbody>
+          <thead>
+              <tr>
+                  <th>ID Venta</th>
+                  <th>Fecha</th>
+                  <th>Total</th>
+                  <th>Estado</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let venta of ventas">
+                  <td>{{ venta.idVenta }}</td>
+                  <td>{{ venta.fecha }}</td>
+                  <td>${{ venta.total }}</td>
+                  <td>Completada</td>
+              </tr>
+          </tbody>
       </table>
-    </div>
+  </div>
   </div>
 </div>

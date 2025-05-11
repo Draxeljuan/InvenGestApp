@@ -4,7 +4,7 @@
     background-color: #1e293b;
     color: white;
     padding: 20px;
-    height: 100vh;
+    height: 110vh;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
 }
 
@@ -52,29 +52,55 @@
     color: #1e293b;
 }
 
-/* Tabs */
+/* Contenedor de pestañas */
 .tab-container {
     margin-top: 20px;
 }
 
+/* Contenedor de botones */
 .tabs {
     display: flex;
     gap: 10px;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
+/* Estilo base de los botones */
 .tab-btn {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease-in-out;
 }
 
+/* Diferenciación por actividad */
+.tab-btn.register { 
+    background-color: #28a745; /* Verde - Registrar */
+    color: white;
+}
+
+.tab-btn.update {
+    background-color: #ffc107; /* Amarillo - Actualizar */
+    color: black;
+}
+
+.tab-btn.discontinue {
+    background-color: #dc3545; /* Rojo - Descontinuar */
+    color: white;
+}
+
+/* Animación al pasar el mouse */
 .tab-btn:hover {
-    background-color: #0056b3;
+    opacity: 0.8;
+}
+
+/* Botón activo */
+.tab-btn.active {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
 }
 
 .tab-content {
@@ -170,6 +196,57 @@
 .selected-product {
     background-color: #c8e6c9; /* Resalta el producto seleccionado */
     font-weight: bold;
+}
+
+.error-msg {
+    color: #d9534f;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Selector de categoría estilizado */
+.category-select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #007bff;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.category-select:hover {
+    border-color: #0056b3;
+}
+
+/* Botón para agregar nueva categoría */
+.new-category-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.new-category-btn:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Animación al abrir el formulario */
+.new-category-container {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 

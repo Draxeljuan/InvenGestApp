@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { LogoutService } from '../logout.service';
 import { VentaService } from '../services/ventas.service';
+import { HistorialVentasService } from '../services/historial-ventas.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-ventas',
@@ -31,10 +33,18 @@ export class VentasComponent {
   mostrarModalFactura: boolean = false;
   idVentaGenerada: number | null = null;
 
+  /** Variables para mostrar las últimas ventas */
+  ventas: any[] = [];
+
   constructor(
     public logoutService: LogoutService,
-    private ventaService: VentaService
-  ) {}
+    private ventaService: VentaService,
+    private historialVentas: HistorialVentasService,
+  ) { }
+
+  ngOnInit(): void {
+    this.cargarUltimasVentas();
+  }
 
   // Búsqueda de clientes en tiempo real
   buscarCliente(): void {
@@ -87,17 +97,17 @@ export class VentasComponent {
   // Búsqueda de productos en tiempo real
   buscarProducto(): void {
     if (this.terminoBusquedaProducto.trim().length < 3) {
-        this.productosFiltrados = [];
-        return;
+      this.productosFiltrados = [];
+      return;
     }
 
     this.ventaService.buscarProductosPorNombre(this.terminoBusquedaProducto).subscribe({
-        next: (productos) => {
-            this.productosFiltrados = productos; // 🔥 Ahora la búsqueda se hace en el backend
-        },
-        error: (err) => console.error("Error al buscar productos:", err)
+      next: (productos) => {
+        this.productosFiltrados = productos;
+      },
+      error: (err) => console.error("Error al buscar productos:", err)
     });
-}
+  }
 
   // Agregar producto al carrito
   agregarAlCarrito(producto: any): void {
@@ -135,15 +145,11 @@ export class VentasComponent {
     return this.carrito.reduce((total, item) => total + item.precioVenta * item.cantidad, 0);
   }
 
-  // Calcular impuesto (10% del subtotal)
-  calcularImpuesto(): number {
-    return this.calcularSubtotal() * 0.10;
-  }
 
   // Calcular el total de la venta
   calcularTotal(): number {
     return this.calcularSubtotal();
-}
+  }
 
   // Obtener el ID del usuario actual desde el token JWT
   obtenerUsuarioActual(): number | null {
@@ -151,92 +157,105 @@ export class VentasComponent {
     if (!token) return null;
 
     try {
-        const payload = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
-        return payload.idUsuario; // Extraemos el `idUsuario`
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.idUsuario;
     } catch (error) {
-        console.error("Error al obtener el usuario desde el JWT:", error);
-        return null;
+      console.error("Error al obtener el usuario desde el JWT:", error);
+      return null;
     }
-}
+  }
 
   // Confirmar y registrar la venta en el sistema
   confirmarVenta(): void {
     if (this.carrito.length === 0) {
-        alert("No puedes realizar una venta sin productos.");
-        return;
+      alert("No puedes realizar una venta sin productos.");
+      return;
     }
 
     const idUsuario = this.obtenerUsuarioActual();
     if (!idUsuario) {
-        alert("Error: No se pudo obtener el usuario. Verifica la autenticación.");
-        return;
+      alert("Error: No se pudo obtener el usuario. Verifica la autenticación.");
+      return;
     }
 
     const venta = {
-        idCliente: this.clienteSeleccionado?.idCliente,
-        idUsuario: idUsuario, 
-        fecha: new Date().toISOString(),
-        total: this.calcularSubtotal(),
-        detalles: this.carrito.map(item => ({
-            idProducto: item.idProducto,
-            cantidad: item.cantidad,
-            precioUnitario: item.precioVenta,
-            subtotal: item.precioVenta * item.cantidad
-        }))
+      idCliente: this.clienteSeleccionado?.idCliente,
+      idUsuario: idUsuario,
+      fecha: new Date().toISOString(),
+      total: this.calcularSubtotal(),
+      detalles: this.carrito.map(item => ({
+        idProducto: item.idProducto,
+        cantidad: item.cantidad,
+        precioUnitario: item.precioVenta,
+        subtotal: item.precioVenta * item.cantidad
+      }))
     };
 
     this.ventaService.crearVenta(venta).subscribe({
-        next: (ventaConfirmada) => {
-            if (!ventaConfirmada.idVenta) {
-                alert("Error: No se pudo Obtener el ID de la venta. Contacta con un Administrador para Notificar el Problema.");
-                return;
-            }
+      next: (ventaConfirmada) => {
+        if (!ventaConfirmada.idVenta) {
+          alert("Error: No se pudo Obtener el ID de la venta. Contacta con un Administrador para Notificar el Problema.");
+          return;
+        }
 
-            console.log("ID de venta recibido Frontend:", ventaConfirmada.idVenta);
+        console.log("ID de venta recibido Frontend:", ventaConfirmada.idVenta);
 
-            alert("Venta registrada correctamente!");
-            this.carrito = [];
-            this.idVentaGenerada = ventaConfirmada.idVenta; // Guardar ID de la venta generada
-            this.mostrarModalFactura = true; // Mostrar modal para descargar factura
-        },
-        error: (err) => console.error("Error al registrar la venta:", err)
+        alert("Venta registrada correctamente!");
+        this.carrito = [];
+        this.idVentaGenerada = ventaConfirmada.idVenta;
+        this.mostrarModalFactura = true;
+      },
+      error: (err) => console.error("Error al registrar la venta:", err)
     });
   }
 
   /** Descargar factura desde el backend */
   descargarFactura(): void {
-    console.log("📄 Solicitando factura para venta ID:", this.idVentaGenerada); // 🔥 Verificación
+    console.log("📄 Solicitando factura para venta ID:", this.idVentaGenerada);
 
     if (!this.idVentaGenerada) {
-        alert("Error: No se ha registrado la venta correctamente.");
-        return;
+      alert("Error: No se ha registrado la venta correctamente.");
+      return;
     }
 
     this.ventaService.generarFactura(this.idVentaGenerada).subscribe({
-        next: (pdf) => {
-            if (!pdf) {
-                alert("Error: No se pudo generar la factura. Contacta con un Administrador para Notificar el Problema.");
-                return;
-            }
+      next: (pdf) => {
+        if (!pdf) {
+          alert("Error: No se pudo generar la factura. Contacta con un Administrador para Notificar el Problema.");
+          return;
+        }
 
-            const blob = new Blob([pdf], { type: 'application/pdf' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Factura_${this.idVentaGenerada}.pdf`; // 🔥 Ahora usa el ID de la venta
-            a.click();
-            window.URL.revokeObjectURL(url);
-        },
-        error: (err) => console.error("Error al generar la factura:", err)
+        const blob = new Blob([pdf], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Factura_${this.idVentaGenerada}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => console.error("Error al generar la factura:", err)
     });
 
     this.cerrarModal();
-}
+  }
 
-/** Cerrar el modal si el usuario no quiere descargar la factura */
-cerrarModal(): void {
-  this.mostrarModalFactura = false;
-}
+  /** Cerrar el modal si el usuario no quiere descargar la factura */
+  cerrarModal(): void {
+    this.mostrarModalFactura = false;
+  }
 
-  
+  /** Cargar Ventas Recientes */
+  cargarUltimasVentas(): void {
+    this.historialVentas.listarVentas().subscribe({
+      next: (data) => {
+        console.log("Ventas obtenidas:", data);
+        this.ventas = data.slice(-2).reverse();
+      },
+      error: (err) => {
+        console.error("⚠ Error al obtener ventas:", err);
+      }
+    });
+  }
+
+
 }
