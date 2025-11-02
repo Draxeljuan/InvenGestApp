@@ -1,223 +1,676 @@
 <div class="sidebar">
-    <div class="logo">
-        <h2>InvenGest Admin</h2>
+  <div class="logo">
+    <h2>InvenGest Admin</h2>
+  </div>
+  <nav class="menu">
+    <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
+      <span>📦 Inventario</span>
     </div>
-    <nav class="menu">
-        <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
-            <span>📦 Inventario</span>
-        </div>
-        <div class="menu-item" routerLink="/movimientos-inventario" routerLinkActive="active">
-            <span>🔄 Mov. Inventario</span>
-        </div>
-        <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
-            <span>📊 Reportes</span>
-        </div>
-        <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
-            <span>💰 Ventas</span>
-        </div>
-        <div class="menu-item" routerLink="/historial-ventas" routerLinkActive="active">
-            <span>📜 Historial Ventas</span>
-        </div>
-        <div class="menu-item" routerLink="/admin-dashboard" routerLinkActive="active">
-            <span>🔍 Buscar Producto</span>
-        </div>
-        <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
-            <span>🔔 Alertas</span>
-        </div>
-        <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
-            <span>👤 Perfil</span>
-        </div>
-        <div class="menu-item logout-btn" (click)="logoutService.openModal()">
-            <span>📤 Cerrar sesión</span>
-        </div>
-    </nav>
+    <div
+      class="menu-item"
+      routerLink="/movimientos-inventario"
+      routerLinkActive="active"
+    >
+      <span>🔄 Mov. Inventario</span>
+    </div>
+    <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
+      <span>📊 Reportes</span>
+    </div>
+    <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
+      <span>💰 Ventas</span>
+    </div>
+    <div
+      class="menu-item"
+      routerLink="/historial-ventas"
+      routerLinkActive="active"
+    >
+      <span>📜 Historial Ventas</span>
+    </div>
+    <div
+      class="menu-item"
+      routerLink="/admin-dashboard"
+      routerLinkActive="active"
+    >
+      <span>🔍 Buscar Producto</span>
+    </div>
+    <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
+      <span>🔔 Alertas</span>
+    </div>
+    <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
+      <span>👤 Perfil</span>
+    </div>
+    <div class="menu-item logout-btn" (click)="logoutService.openModal()">
+      <span>📤 Cerrar sesión</span>
+    </div>
+  </nav>
 </div>
 
 <div class="main-content">
-    <div class="header">
-        <h1>Gestión de Inventario</h1>
+  <div class="header">
+    <h1>Gestión de Inventario</h1>
+  </div>
+
+  <div class="tab-container">
+    <div class="tabs">
+      <button
+        class="tab-btn register"
+        [ngClass]="{ active: activeTab === 'register' }"
+        (click)="setActiveTab('register')"
+      >
+        Registrar Producto
+      </button>
+      <button
+        class="tab-btn update"
+        [ngClass]="{ active: activeTab === 'update' }"
+        (click)="setActiveTab('update')"
+      >
+        Actualizar Producto
+      </button>
+      <button
+        class="tab-btn discontinue"
+        [ngClass]="{ active: activeTab === 'discontinue' }"
+        (click)="setActiveTab('discontinue')"
+      >
+        Descontinuar Producto
+      </button>
     </div>
 
-    <div class="tab-container">
-        <div class="tabs">
-            <button class="tab-btn register" [ngClass]="{'active': activeTab === 'register'}" (click)="setActiveTab('register')">Registrar Producto</button>
-            <button class="tab-btn update" [ngClass]="{'active': activeTab === 'update'}" (click)="setActiveTab('update')">Actualizar Producto</button>
-            <button class="tab-btn discontinue" [ngClass]="{'active': activeTab === 'discontinue'}" (click)="setActiveTab('discontinue')">Descontinuar Producto</button>
+    <div class="tab-content" *ngIf="activeTab === 'register'">
+      <h2>Registrar Producto</h2>
+
+      <form #formProducto="ngForm" (ngSubmit)="registrarProducto()">
+        <!-- Nombre del Producto -->
+        <div class="form-group">
+          <label for="product-name">Nombre del Producto</label>
+          <input
+            type="text"
+            id="product-name"
+            name="nombre"
+            [(ngModel)]="nuevoProducto.nombre"
+            required
+            pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{1,45}$"
+            maxlength="45"
+            #nombre="ngModel"
+          />
+          <div *ngIf="nombre.invalid && nombre.touched">
+            <small *ngIf="nombre.errors?.['required']" class="error-msg"
+              >⚠ Campo obligatorio</small
+            >
+            <small *ngIf="nombre.errors?.['pattern']" class="error-msg"
+              >⚠ Solo letras y máximo 45 caracteres</small
+            >
+          </div>
         </div>
 
-        <div class="tab-content" *ngIf="activeTab === 'register'">
-            <h2>Registrar Producto</h2>
-            <form (submit)="registrarProducto()">
-                <div class="form-group">
-                    <label for="product-name">Nombre del Producto</label>
-                    <input type="text" id="product-name" [(ngModel)]="nuevoProducto.nombre" name="nombre" required>
-                </div>
-        
-                <div class="form-group">
-                    <label for="product-category">Categoría</label>
-                    <select id="product-category" class="category-select" [(ngModel)]="nuevoProducto.idCategoria" name="idCategoria" required>
-                        <option *ngFor="let categoria of categorias" [value]="categoria.idCategoria">{{ categoria.nombre }}</option>
-                    </select>
-                    <button type="button" class="new-category-btn" (click)="toggleFormularioCategoria()">+ Nueva Categoría</button>
-                </div>
-                
-                <div class="form-group new-category-container" *ngIf="mostrarFormularioCategoria">
-                    <h3>Crear Nueva Categoría</h3>
-                    <label for="new-category-name">Nombre</label>
-                    <input type="text" id="new-category-name" [(ngModel)]="nuevaCategoria.nombre" name="categoriaNombre" required>
-                    <label for="new-category-description">Descripción</label>
-                    <input type="text" id="new-category-description" [(ngModel)]="nuevaCategoria.descripcion" name="categoriaDescripcion" required>
-                    <button type="button" class="new-category-btn" (click)="crearNuevaCategoria()">Registrar Categoría</button>
-                </div>
-        
-                <div class="form-group">
-                    <label for="product-price">Precio de Venta</label>
-                    <input type="number" id="product-price" [(ngModel)]="nuevoProducto.precioVenta" name="precioVenta" required>
-                </div>
-        
-                <div class="form-group">
-                    <label for="product-cost">Costo de Compra</label>
-                    <input type="number" id="product-cost" [(ngModel)]="nuevoProducto.costoCompra" name="costoCompra" required>
-                </div>
-        
-                <div class="form-group">
-                    <label for="product-stock">Stock Inicial</label>
-                    <input type="number" id="product-stock" [(ngModel)]="nuevoProducto.stock" name="stock" (input)="calcularEstado()" required>
-                </div>
-        
-                <div class="form-group">
-                    <label for="product-location">Ubicación</label>
-                    <input type="text" id="product-location" [(ngModel)]="nuevoProducto.ubicacion" name="ubicacion" required>
-                </div>
-        
-                <div class="form-group">
-                    <label for="product-date">Fecha de Ingreso</label>
-                    <input type="date" id="product-date" [(ngModel)]="nuevoProducto.fechaIngreso" name="fechaIngreso" required (change)="validarFechaIngreso()">
-                    <p *ngIf="fechaIngresoInvalida" class="error-msg">⚠ La fecha no puede estar en el futuro.</p>
-                </div>
-        
-                <div class="form-group">
-                    <label>Estado del Producto</label>
-                    <p>{{ nuevoProducto.estado }}</p>
-                </div>
-        
-                <button type="submit" class="form-btn">Registrar</button>
-            </form>
+        <!-- Categoría -->
+        <div class="form-group">
+          <label for="product-category">Categoría</label>
+          <select
+            id="product-category"
+            class="category-select"
+            [(ngModel)]="nuevoProducto.idCategoria"
+            name="idCategoria"
+            required
+            #categoria="ngModel"
+          >
+            <option
+              *ngFor="let categoria of categorias"
+              [value]="categoria.idCategoria"
+            >
+              {{ categoria.nombre }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="new-category-btn"
+            (click)="toggleFormularioCategoria()"
+          >
+            + Nueva Categoría
+          </button>
+          <div *ngIf="categoria.invalid && categoria.touched">
+            <small class="error-msg">⚠ Debe seleccionar una categoría</small>
+          </div>
         </div>
 
-        <div class="tab-content" *ngIf="activeTab === 'update'">
-            <h2>Actualizar Producto</h2>
-        
-            <div class="form-group">
-                <label for="search-product">Buscar Producto</label>
-                <input type="text" id="search-product" [(ngModel)]="terminoBusqueda" name="terminoBusqueda" (input)="buscarProducto()">
-            </div>
-        
-            <div class="search-results" *ngIf="productosFiltrados.length > 0">
-                <p>Resultados encontrados:</p>
-                <ul class="scrollable-list">
-                    <li *ngFor="let producto of productosFiltrados.slice(0, 5)" 
-                        [ngClass]="{'selected-product': producto.idProducto === productoActualizado?.idProducto}"
-                        (click)="seleccionarProducto(producto)">
-                        {{ producto.nombre }} (ID: {{ producto.idProducto }})
-                    </li>
-                </ul>
-            </div>
-        
-            <form (submit)="actualizarProducto()" *ngIf="productoActualizado">
-                <div class="form-group">
-                    <label for="update-id">ID del Producto</label>
-                    <input type="text" id="update-id" [(ngModel)]="productoActualizado.idProducto" name="updateId" readonly>
-                </div>
-        
-                <div class="form-group">
-                    <label for="update-name">Nombre del Producto</label>
-                    <input type="text" id="update-name" [(ngModel)]="productoActualizado.nombre" name="nombre">
-                </div>
-        
-                <div class="form-group">
-                    <label for="update-category">Categoría</label>
-                    <select id="update-category" class="category-select" [(ngModel)]="productoActualizado.idCategoria" name="idCategoria">
-                        <option *ngFor="let categoria of categorias" [value]="categoria.idCategoria">{{ categoria.nombre }}</option>
-                    </select>
-                </div>
-        
-                <div class="form-group">
-                    <label for="update-price">Precio de Venta</label>
-                    <input type="number" id="update-price" [(ngModel)]="productoActualizado.precioVenta" name="precioVenta">
-                </div>
-        
-                <div class="form-group">
-                    <label for="update-cost">Costo de Compra</label>
-                    <input type="number" id="update-cost" [(ngModel)]="productoActualizado.costoCompra" name="costoCompra">
-                </div>
-        
-                <div class="form-group">
-                    <label for="update-stock">Stock</label>
-                    <input type="number" id="update-stock" [(ngModel)]="productoActualizado.stock" name="stock" (input)="calcularEstadoActualizado()">
-                </div>
-        
-                <div class="form-group">
-                    <label for="update-location">Ubicación</label>
-                    <input type="text" id="update-location" [(ngModel)]="productoActualizado.ubicacion" name="ubicacion">
-                </div>
-        
-                <div class="form-group">
-                    <label for="update-date">Fecha de Ingreso</label>
-                    <input type="date" id="update-date" [(ngModel)]="productoActualizado.fechaIngreso" name="fechaIngreso">
-                </div>
-        
-                <div class="form-group">
-                    <label>Estado del Producto</label>
-                    <p>{{ productoActualizado.estado }}</p>
-                </div>
-        
-                <button type="submit" class="form-btn">Actualizar</button>
-            </form>
+        <!-- Formulario Nueva Categoría -->
+        <div
+          class="form-group new-category-container"
+          *ngIf="mostrarFormularioCategoria"
+        >
+          <h3>Crear Nueva Categoría</h3>
+
+          <label for="new-category-name">Nombre</label>
+          <input
+            type="text"
+            id="new-category-name"
+            name="categoriaNombre"
+            [(ngModel)]="nuevaCategoria.nombre"
+            required
+            pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{1,45}$"
+            maxlength="45"
+            #categoriaNombre="ngModel"
+          />
+          <div *ngIf="categoriaNombre.invalid && categoriaNombre.touched">
+            <small class="error-msg"
+              >⚠ Solo letras y máximo 45 caracteres</small
+            >
+          </div>
+
+          <label for="new-category-description">Descripción</label>
+          <input
+            type="text"
+            id="new-category-description"
+            name="categoriaDescripcion"
+            [(ngModel)]="nuevaCategoria.descripcion"
+            required
+            maxlength="100"
+            #categoriaDescripcion="ngModel"
+          />
+          <div
+            *ngIf="categoriaDescripcion.invalid && categoriaDescripcion.touched"
+          >
+            <small class="error-msg"
+              >⚠ Campo obligatorio y máximo 100 caracteres</small
+            >
+          </div>
+
+          <button
+            type="button"
+            class="new-category-btn"
+            (click)="crearNuevaCategoria()"
+          >
+            Registrar Categoría
+          </button>
         </div>
 
-        <div class="tab-content" *ngIf="activeTab === 'discontinue'">
-            <h2>Descontinuar Producto</h2>
-        
-            <div class="form-group">
-                <label for="search-product">Buscar Producto</label>
-                <input type="text" id="search-product" [(ngModel)]="terminoBusqueda" name="terminoBusqueda" (input)="buscarProducto()">
-            </div>
-        
-            <div class="search-results" *ngIf="productosFiltrados.length > 0">
-                <p>Resultados encontrados:</p>
-                <ul class="scrollable-list">
-                    <li *ngFor="let producto of productosFiltrados.slice(0, 5)" 
-                        [ngClass]="{'selected-product': producto.idProducto === productoSeleccionado?.idProducto}"
-                        (click)="seleccionarProductoParaDescontinuar(producto)">
-                        {{ producto.nombre }} (ID: {{ producto.idProducto }})
-                    </li>
-                </ul>
-            </div>
-        
-            <form (submit)="confirmarDescontinuacion()" *ngIf="productoSeleccionado">
-                <div class="form-group">
-                    <label>ID del Producto</label>
-                    <input type="text" [(ngModel)]="productoSeleccionado.idProducto" name="idProducto" readonly>
-                </div>
-        
-                <div class="form-group">
-                    <label>Nombre del Producto</label>
-                    <input type="text" [(ngModel)]="productoSeleccionado.nombre" name="nombre" readonly>
-                </div>
-        
-                <div class="form-group">
-                    <label>Stock Actual</label>
-                    <input type="number" [(ngModel)]="productoSeleccionado.stock" name="stock" readonly>
-                </div>
-        
-                <div class="form-group">
-                    <label>Estado Actual</label>
-                    <p>{{ productoSeleccionado.estado }}</p>
-                </div>
-        
-                <button type="submit" class="form-btn">Confirmar Descontinuación</button>
-            </form>
+        <!-- Precio de Venta -->
+        <div
+          class="form-group"
+          [ngClass]="{ 'input-error': diferenciaInvalida }"
+        >
+          <label for="product-price">Precio de Venta</label>
+          <input
+            type="number"
+            id="product-price"
+            [(ngModel)]="nuevoProducto.precioVenta"
+            name="precioVenta"
+            required
+            min="200"
+            max="110000"
+            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+            maxlength="6"
+            #precioVenta="ngModel"
+          />
+          <div *ngIf="precioVenta.touched && precioVenta.invalid">
+            <small class="error-msg" *ngIf="precioVenta.errors?.['required']">
+              ⚠ El precio de venta es obligatorio.
+            </small>
+            <small
+              class="error-msg"
+              *ngIf="precioVenta.errors?.['min'] || precioVenta.errors?.['max']"
+            >
+              ⚠ El precio debe estar entre $200 y $110.000.
+            </small>
+          </div>
         </div>
+
+        <!-- Costo de Compra -->
+        <div
+          class="form-group"
+          [ngClass]="{ 'input-error': diferenciaInvalida }"
+        >
+          <label for="product-cost">Costo de Compra</label>
+          <input
+            type="number"
+            id="product-cost"
+            [(ngModel)]="nuevoProducto.costoCompra"
+            name="costoCompra"
+            required
+            min="100"
+            max="100000"
+            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+            maxlength="6"
+            #costoCompra="ngModel"
+          />
+          <div *ngIf="costoCompra.touched && costoCompra.invalid">
+            <small class="error-msg" *ngIf="costoCompra.errors?.['required']">
+              ⚠ El costo de compra es obligatorio.
+            </small>
+            <small
+              class="error-msg"
+              *ngIf="costoCompra.errors?.['min'] || costoCompra.errors?.['max']"
+            >
+              ⚠ El costo debe estar entre $100 y $100.000.
+            </small>
+          </div>
+        </div>
+
+        <!-- Mensaje de advertencia por diferencia inválida -->
+        <div *ngIf="diferenciaInvalida" class="error-msg">
+          ⚠ El costo no puede ser mayor al precio de venta. Debe existir al
+          menos una diferencia de $100.
+        </div>
+
+        <!-- Unidades Almacenadas Inicialmente -->
+        <div class="form-group">
+          <label for="product-stock">Unidades Iniciales</label>
+          <input
+            type="number"
+            id="product-stock"
+            name="stock"
+            placeholder="0 - 500"
+            [(ngModel)]="nuevoProducto.stock"
+            required
+            min="0"
+            max="500"
+            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+            maxlength="3"
+            (input)="calcularEstado()"
+            #stock="ngModel"
+          />
+          <div *ngIf="stock.touched && stock.invalid">
+            <small class="error-msg" *ngIf="stock.errors?.['required']">
+              ⚠ El stock inicial es obligatorio.
+            </small>
+            <small
+              class="error-msg"
+              *ngIf="stock.errors?.['min'] || stock.errors?.['max']"
+            >
+              ⚠ El stock debe estar entre 0 y 500 unidades.
+            </small>
+          </div>
+        </div>
+
+        <!-- Ubicación -->
+        <div class="form-group">
+          <label for="product-location">Ubicación</label>
+          <input
+            type="text"
+            id="product-location"
+            name="ubicacion"
+            [(ngModel)]="nuevoProducto.ubicacion"
+            required
+            maxlength="100"
+            #ubicacion="ngModel"
+          />
+          <div *ngIf="ubicacion.invalid && ubicacion.touched">
+            <small class="error-msg"
+              >⚠ Campo obligatorio y máximo 100 caracteres</small
+            >
+          </div>
+        </div>
+
+        <!-- Fecha -->
+        <div class="form-group">
+          <label for="product-date">Fecha de Ingreso</label>
+          <input
+            type="date"
+            id="product-date"
+            name="fechaIngreso"
+            [(ngModel)]="nuevoProducto.fechaIngreso"
+            (change)="validarFechaIngreso()"
+            required
+            #fechaIngreso="ngModel"
+          />
+          <p *ngIf="fechaIngresoInvalida" class="error-msg">
+            ⚠ La fecha no puede estar en el futuro.
+          </p>
+        </div>
+
+        <!-- Estado -->
+        <div class="form-group">
+          <label>Estado del Producto</label>
+          <p>{{ nuevoProducto.estado }}</p>
+        </div>
+
+        <!-- Botón -->
+        <button
+          type="submit"
+          class="form-btn"
+          [disabled]="formProducto.invalid || fechaIngresoInvalida"
+        >
+          Registrar
+        </button>
+      </form>
     </div>
+
+    <div class="tab-content" *ngIf="activeTab === 'update'">
+      <h2>Actualizar Producto</h2>
+
+      <!-- Busqueda de producto -->
+      <div class="form-group">
+        <label for="search-product">Buscar Producto</label>
+        <input
+          type="text"
+          maxlength="15"
+          id="search-product"
+          [(ngModel)]="terminoBusqueda"
+          name="terminoBusqueda"
+          (input)="buscarProducto()"
+        />
+      </div>
+
+      <!-- Resultados Filtrados -->
+      <div class="search-results" *ngIf="productosFiltrados.length > 0">
+        <p>Resultados encontrados:</p>
+        <ul class="scrollable-list">
+          <li
+            *ngFor="let producto of productosFiltrados.slice(0, 5)"
+            [ngClass]="{
+              'selected-product':
+                producto.idProducto === productoActualizado?.idProducto
+            }"
+            (click)="seleccionarProducto(producto)"
+          >
+            {{ producto.nombre }} (ID: {{ producto.idProducto }})
+          </li>
+        </ul>
+      </div>
+
+      <!-- ID del Producto -->
+      <form
+        #formActualizarProducto="ngForm"
+        (submit)="actualizarProducto()"
+        *ngIf="productoActualizado"
+      >
+        <div class="form-group">
+          <label for="update-id">ID del Producto</label>
+          <input
+            type="text"
+            id="update-id"
+            [(ngModel)]="productoActualizado.idProducto"
+            name="updateId"
+            readonly
+          />
+        </div>
+
+        <!-- Nombre del Producto -->
+        <div class="form-group">
+          <label for="update-name">Nombre del Producto</label>
+          <input
+            type="text"
+            id="update-name"
+            name="nombre"
+            [(ngModel)]="productoActualizado.nombre"
+            required
+            pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{1,45}$"
+            maxlength="45"
+            #nombreUpdate="ngModel"
+          />
+          <div *ngIf="nombreUpdate.invalid && nombreUpdate.touched">
+            <small *ngIf="nombreUpdate.errors?.['required']" class="error-msg">
+              ⚠ Campo obligatorio
+            </small>
+            <small *ngIf="nombreUpdate.errors?.['pattern']" class="error-msg">
+              ⚠ Solo letras y máximo 45 caracteres
+            </small>
+          </div>
+        </div>
+
+        <!-- Categoría -->
+        <div class="form-group">
+          <label for="update-category">Categoría</label>
+          <select
+            id="update-category"
+            class="category-select"
+            [(ngModel)]="productoActualizado.idCategoria"
+            name="idCategoria"
+          >
+            <option
+              *ngFor="let categoria of categorias"
+              [value]="categoria.idCategoria"
+            >
+              {{ categoria.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Precio de Venta -->
+        <div
+          class="form-group"
+          [ngClass]="{ 'input-error': diferenciaInvalidaUpdate }"
+        >
+          <label for="update-price">Precio de Venta</label>
+          <input
+            type="number"
+            id="update-price"
+            [(ngModel)]="productoActualizado.precioVenta"
+            name="precioVenta"
+            min="200"
+            max="110000"
+            required
+            #precioVentaUpd="ngModel"
+          />
+          <div *ngIf="precioVentaUpd.touched && precioVentaUpd.invalid">
+            <small
+              class="error-msg"
+              *ngIf="precioVentaUpd.errors?.['required']"
+            >
+              ⚠ El precio de venta es obligatorio.
+            </small>
+            <small
+              class="error-msg"
+              *ngIf="precioVentaUpd.errors?.['min'] || precioVentaUpd.errors?.['max']"
+            >
+              ⚠ El precio debe estar entre $200 y $110.000.
+            </small>
+          </div>
+        </div>
+
+        <!-- Costo de Compra -->
+        <div
+          class="form-group"
+          [ngClass]="{ 'input-error': diferenciaInvalidaUpdate }"
+        >
+          <label for="update-cost">Costo de Compra</label>
+          <input
+            type="number"
+            id="update-cost"
+            [(ngModel)]="productoActualizado.costoCompra"
+            name="costoCompra"
+            min="100"
+            max="100000"
+            required
+            #costoUpd="ngModel"
+          />
+          <div *ngIf="costoUpd.touched && costoUpd.invalid">
+            <small class="error-msg" *ngIf="costoUpd.errors?.['required']">
+              ⚠ El costo de compra es obligatorio.
+            </small>
+            <small
+              class="error-msg"
+              *ngIf="costoUpd.errors?.['min'] || costoUpd.errors?.['max']"
+            >
+              ⚠ El costo debe estar entre $100 y $100.000.
+            </small>
+          </div>
+        </div>
+
+        <!-- Alerta si la diferencia es inválida -->
+        <div *ngIf="diferenciaInvalidaUpdate" class="error-msg">
+          ⚠ El costo no puede ser mayor al precio de venta. Debe existir al
+          menos una diferencia de $100.
+        </div>
+
+        <!-- Unidades Almacenadas -->
+        <div class="form-group">
+          <label for="update-stock">Unidades Almacenadas</label>
+          <input
+            type="number"
+            id="update-stock"
+            [(ngModel)]="productoActualizado.stock"
+            name="stock"
+            (input)="calcularEstadoActualizado()"
+            min="1"
+            max="500"
+            required
+            #stockUpd="ngModel"
+          />
+          <div *ngIf="stockUpd.touched && stockUpd.invalid">
+            <small class="error-msg" *ngIf="stockUpd.errors?.['required']">
+              ⚠ Stock obligatorio.
+            </small>
+            <small
+              class="error-msg"
+              *ngIf="stockUpd.errors?.['min'] || stockUpd.errors?.['max']"
+            >
+              ⚠ El stock debe estar entre 1 y 500 unidades.
+            </small>
+          </div>
+        </div>
+
+        <!-- Ubicacion del producto -->
+        <div class="form-group">
+          <label for="update-location">Ubicación</label>
+          <input
+            type="text"
+            id="update-location"
+            [(ngModel)]="productoActualizado.ubicacion"
+            name="ubicacion"
+            required
+            maxlength="100"
+            #ubicacionUpdate="ngModel"
+          />
+          <div *ngIf="ubicacionUpdate.invalid && ubicacionUpdate.touched">
+            <small class="error-msg">
+              ⚠ Campo obligatorio y máximo 100 caracteres
+            </small>
+          </div>
+        </div>
+
+        <!-- Fecha de Ingreso -->
+        <div class="form-group">
+          <label for="update-date">Fecha de Ingreso</label>
+          <input
+            type="date"
+            id="update-date"
+            [(ngModel)]="productoActualizado.fechaIngreso"
+            name="fechaIngreso"
+            (change)="validarFechaIngresoUpdate()"
+            required
+            #fechaIngresoUpdate="ngModel"
+          />
+          <p *ngIf="fechaIngresoInvalidaUpdate" class="error-msg">
+            ⚠ La fecha no puede estar en el futuro.
+          </p>
+        </div>
+
+        <!-- Estado del Producto -->
+        <div class="form-group">
+          <label>Estado del Producto</label>
+          <p>{{ productoActualizado.estado }}</p>
+        </div>
+
+        <button
+          type="submit"
+          class="form-btn"
+          [disabled]="
+            formActualizarProducto.invalid || fechaIngresoInvalidaUpdate
+          "
+        >
+          Actualizar
+        </button>
+      </form>
+    </div>
+
+    <div class="tab-content" *ngIf="activeTab === 'discontinue'">
+      <h2>Descontinuar Producto</h2>
+
+      <div class="form-group">
+        <label for="search-product">Buscar Producto</label>
+        <input
+          type="text"
+          id="search-product"
+          [(ngModel)]="terminoBusqueda"
+          name="terminoBusqueda"
+          (input)="buscarProducto()"
+        />
+      </div>
+
+      <div class="search-results" *ngIf="productosFiltrados.length > 0">
+        <p>Resultados encontrados:</p>
+        <ul class="scrollable-list">
+          <li
+            *ngFor="let producto of productosFiltrados.slice(0, 5)"
+            [ngClass]="{
+              'selected-product':
+                producto.idProducto === productoSeleccionado?.idProducto
+            }"
+            (click)="seleccionarProductoParaDescontinuar(producto)"
+          >
+            {{ producto.nombre }} (ID: {{ producto.idProducto }})
+          </li>
+        </ul>
+      </div>
+
+      <form (submit)="confirmarDescontinuacion()" *ngIf="productoSeleccionado">
+        <div class="form-group">
+          <label>ID del Producto</label>
+          <input
+            type="text"
+            [(ngModel)]="productoSeleccionado.idProducto"
+            name="idProducto"
+            readonly
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Nombre del Producto</label>
+          <input
+            type="text"
+            [(ngModel)]="productoSeleccionado.nombre"
+            name="nombre"
+            readonly
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Stock Actual</label>
+          <input
+            type="number"
+            [(ngModel)]="productoSeleccionado.stock"
+            name="stock"
+            readonly
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Estado Actual</label>
+          <p>{{ productoSeleccionado.estado }}</p>
+        </div>
+
+        <!-- Primera confirmación -->
+        <div *ngIf="!mostrarConfirmacionFinal">
+          <button
+            type="button"
+            class="form-btn"
+            (click)="mostrarConfirmacionDescontinuacion()"
+          >
+            Confirmar Descontinuación
+          </button>
+        </div>
+
+        <!-- Segunda confirmación -->
+        <div *ngIf="mostrarConfirmacionFinal">
+          <p class="confirm-msg">
+            ¿Estás seguro de descontinuar este producto?
+          </p>
+          <button
+            type="button"
+            class="form-btn btn-danger"
+            (click)="confirmarDescontinuacion()"
+          >
+            Sí, descontinuar
+          </button>
+          <button
+            type="button"
+            class="form-btn"
+            (click)="cancelarConfirmacionDescontinuacion()"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

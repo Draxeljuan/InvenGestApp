@@ -59,10 +59,25 @@
       <input
         type="text"
         [(ngModel)]="terminoBusquedaCliente"
+        required
+        pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
         placeholder="Buscar por nombre o apellido..."
-        (input)="buscarCliente()"
+        maxlength="50"
+        (input)="validarYBuscarCliente()"
+        #busquedaInput="ngModel"
+        name="busquedaCliente"
       />
-      <button (click)="buscarCliente()">Buscar</button>
+      <button (click)="validarYBuscarCliente()">Buscar</button>
+
+      <div *ngIf="busquedaInput.invalid && busquedaInput.touched">
+        <small *ngIf="busquedaInput.errors?.['pattern']" class="error-msg">
+          ⚠ Ingresa texto válido. No se permiten números ni caracteres
+          especiales.
+        </small>
+        <small *ngIf="busquedaInput.errors?.['required']" class="error-msg">
+          ⚠ Este campo es obligatorio.
+        </small>
+      </div>
     </div>
 
     <!-- Resultados de la búsqueda -->
@@ -103,11 +118,51 @@
     <!-- Formulario para registrar un nuevo cliente -->
     <div *ngIf="mostrarFormularioCliente" class="formulario-cliente">
       <h3>Registrar Nuevo Cliente</h3>
+
       <label>Nombre:</label>
-      <input type="text" [(ngModel)]="nuevoCliente.primerNombre" />
+      <input
+        type="text"
+        [(ngModel)]="nuevoCliente.primerNombre"
+        name="nombreCliente"
+        maxlength="30"
+        pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+        required
+        #nombreCliente="ngModel"
+      />
+      <div *ngIf="nombreCliente.invalid && nombreCliente.touched">
+        <small *ngIf="nombreCliente.errors?.['pattern']" class="error-msg">
+          ⚠ Solo se permiten letras y espacios.
+        </small>
+        <small *ngIf="nombreCliente.errors?.['required']" class="error-msg">
+          ⚠ Este campo es obligatorio.
+        </small>
+      </div>
+
       <label>Apellido:</label>
-      <input type="text" [(ngModel)]="nuevoCliente.primerApellido" />
-      <button (click)="registrarCliente()">Registrar</button>
+      <input
+        type="text"
+        [(ngModel)]="nuevoCliente.primerApellido"
+        name="apellidoCliente"
+        maxlength="30"
+        pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+        required
+        #apellidoCliente="ngModel"
+      />
+      <div *ngIf="apellidoCliente.invalid && apellidoCliente.touched">
+        <small *ngIf="apellidoCliente.errors?.['pattern']" class="error-msg">
+          ⚠ Solo se permiten letras y espacios.
+        </small>
+        <small *ngIf="apellidoCliente.errors?.['required']" class="error-msg">
+          ⚠ Este campo es obligatorio.
+        </small>
+      </div>
+
+      <button
+        (click)="registrarCliente()"
+        [disabled]="nombreCliente.invalid || apellidoCliente.invalid"
+      >
+        Registrar
+      </button>
     </div>
 
     <!-- Información del cliente seleccionado -->
@@ -132,10 +187,37 @@
         <input
           type="text"
           [(ngModel)]="terminoBusquedaProducto"
+          name="busquedaProducto"
           placeholder="Buscar por nombre o ID..."
+          maxlength="30"
+          pattern="^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]*$"
+          required
+          #busquedaProductoInput="ngModel"
           (input)="buscarProducto()"
         />
-        <button (click)="buscarProducto()">Buscar</button>
+        <button
+          (click)="buscarProducto()"
+          [disabled]="busquedaProductoInput.invalid"
+        >
+          Buscar
+        </button>
+
+        <div
+          *ngIf="busquedaProductoInput.invalid && busquedaProductoInput.touched"
+        >
+          <small
+            *ngIf="busquedaProductoInput.errors?.['pattern']"
+            class="error-msg"
+          >
+            ⚠ Solo se permiten letras y números.
+          </small>
+          <small
+            *ngIf="busquedaProductoInput.errors?.['required']"
+            class="error-msg"
+          >
+            ⚠ Este campo es obligatorio.
+          </small>
+        </div>
       </div>
 
       <!-- Resultados de búsqueda -->
@@ -154,7 +236,7 @@
       </div>
     </div>
 
-    <!-- 🏆 Carrito de compras -->
+    <!-- Carrito de compras -->
     <div class="cart-summary">
       <h2 class="cart-title">Carrito de Compras</h2>
 
@@ -184,10 +266,14 @@
       <div class="cart-summary-line">
         <span>Total:</span>
         <span>${{ calcularSubtotal() }}</span>
-        <!-- 🔥 Total ahora es igual al subtotal -->
+        <!-- Total ahora es igual al subtotal -->
       </div>
 
-      <button class="checkout-btn" (click)="confirmarVenta()">
+      <button
+        class="checkout-btn"
+        (click)="confirmarVenta()"
+        [disabled]="!clienteSeleccionado || carrito.length === 0"
+      >
         Finalizar Venta
       </button>
     </div>
@@ -209,23 +295,23 @@
     <div class="sale-history">
       <h2 class="cart-title">Ventas Recientes</h2>
       <table class="inventory-table" style="width: 100%">
-          <thead>
-              <tr>
-                  <th>ID Venta</th>
-                  <th>Fecha</th>
-                  <th>Total</th>
-                  <th>Estado</th>
-              </tr>
-          </thead>
-          <tbody>
-              <tr *ngFor="let venta of ventas">
-                  <td>{{ venta.idVenta }}</td>
-                  <td>{{ venta.fecha }}</td>
-                  <td>${{ venta.total }}</td>
-                  <td>Completada</td>
-              </tr>
-          </tbody>
+        <thead>
+          <tr>
+            <th>ID Venta</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let venta of ventas">
+            <td>{{ venta.idVenta }}</td>
+            <td>{{ venta.fecha }}</td>
+            <td>${{ venta.total }}</td>
+            <td>Completada</td>
+          </tr>
+        </tbody>
       </table>
-  </div>
+    </div>
   </div>
 </div>

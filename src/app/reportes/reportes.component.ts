@@ -19,6 +19,9 @@ export class ReportesComponent {
   tipoReporte: string = "ventas";
   fechaInicio: string = "";
   fechaFin: string = "";
+  fechaActual: string = new Date().toISOString().split("T")[0];
+  fechaMinima: string = new Date(new Date().setFullYear(new Date().getFullYear() - 5)).toISOString().split("T")[0];
+
 
   constructor(
     public logoutService: LogoutService,
@@ -32,11 +35,21 @@ export class ReportesComponent {
 
   /** Obtener reportes desde el backend */
   obtenerReportes(): void {
-    this.reportesService.obtenerReportes().subscribe((reportes: any[]) => {
-      this.reportesVentas = reportes.filter(r => r.idTipo === 1); // Ventas
-      this.reportesInventario = reportes.filter(r => r.idTipo === 2); // Inventario
+    this.reportesService.obtenerReportes().subscribe({
+      next: (reportes: any[]) => {
+        this.reportesVentas = reportes.filter(r => r.idTipo === 1); // Ventas
+        this.reportesInventario = reportes.filter(r => r.idTipo === 2); // Inventario
+      },
+      error: (err) => {
+        console.error(" Error al obtener reportes", err);
+
+        if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+          alert("⚠ No se pudieron obtener los reportes. Verifique su conexión.");
+        }
+      }
     });
   }
+
 
   /** Generar un nuevo reporte */
   generarReporte(): void {
@@ -45,21 +58,49 @@ export class ReportesComponent {
       return;
     }
 
-    if (this.tipoReporte !== "ventas" && this.tipoReporte !== "inventario") {
-      alert("⚠ Selecciona un tipo de reporte válido.");
+    const fechaInicioObj = new Date(this.fechaInicio);
+    const fechaFinObj = new Date(this.fechaFin);
+    const fechaActual = new Date();
+    const cincoAniosAtras = new Date();
+    cincoAniosAtras.setFullYear(fechaActual.getFullYear() - 5);
+
+    // Validar que ninguna fecha esté en el futuro
+    if (fechaInicioObj > fechaActual || fechaFinObj > fechaActual) {
+      alert("⚠ La fecha de inicio y fin no pueden estar en el futuro.");
+      return;
+    }
+
+    // Limitar la fecha de inicio a un máximo de 5 años atrás
+    if (fechaInicioObj < cincoAniosAtras) {
+      alert("⚠ No puedes generar reportes con una fecha de inicio mayor a 5 años atrás.");
+      return;
+    }
+
+    // Validar que la fecha de inicio no sea mayor a la fecha de fin
+    if (fechaInicioObj > fechaFinObj) {
+      alert("⚠ La fecha de inicio no puede ser mayor a la fecha de fin.");
       return;
     }
 
     // Obtener el ID del usuario (puede venir desde autenticación)
     const idUsuario = this.obtenerIdUsuario();
 
-    this.reportesService.generarReporte(this.tipoReporte, this.fechaInicio, this.fechaFin, idUsuario).subscribe(() => {
-      alert("✅ Reporte generado correctamente!");
-      
-      this.obtenerReportes();
-      
+    this.reportesService.generarReporte(this.tipoReporte, this.fechaInicio, this.fechaFin, idUsuario).subscribe({
+      next: () => {
+        alert("✅ Reporte generado correctamente!");
+        this.obtenerReportes();
+      },
+      error: (err) => {
+        console.error(" Error al generar reporte", err);
+
+        if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+          alert("⚠ No se pudo generar el reporte. Verifique su conexión.");
+        }
+      }
     });
   }
+
+
 
   /** Obtener ID del usuario autenticado */
   obtenerIdUsuario(): number {
@@ -75,12 +116,22 @@ export class ReportesComponent {
   /** Eliminar un reporte */
   eliminarReporte(idReporte: number): void {
     if (confirm("¿Seguro que quieres eliminar este reporte?")) {
-      this.reportesService.eliminarReporte(idReporte).subscribe(() => {
-        alert("Reporte eliminado correctamente!");
-        this.obtenerReportes(); // Actualizamos la lista tras eliminar
+      this.reportesService.eliminarReporte(idReporte).subscribe({
+        next: () => {
+          alert("✅ Reporte eliminado correctamente!");
+          this.obtenerReportes(); // Actualizamos la lista tras eliminar
+        },
+        error: (err) => {
+          console.error(" Error al eliminar reporte", err);
+
+          if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+            alert("⚠ No se pudo eliminar el reporte.");
+          }
+        }
       });
     }
   }
+
 
 
 }

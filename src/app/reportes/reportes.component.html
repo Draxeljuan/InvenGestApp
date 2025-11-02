@@ -1,91 +1,141 @@
 <div class="sidebar">
-    <div class="logo">
-        <h2>InvenGest Admin</h2>
+  <div class="logo">
+    <h2>InvenGest Admin</h2>
+  </div>
+  <nav class="menu">
+    <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
+      <span>📦 Inventario</span>
     </div>
-    <nav class="menu">
-        <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
-            <span>📦 Inventario</span>
-        </div>
-        <div class="menu-item" routerLink="/movimientos-inventario" routerLinkActive="active">
-            <span>🔄 Mov. Inventario</span>
-        </div>
-        <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
-            <span>📊 Reportes</span>
-        </div>
-        <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
-            <span>💰 Ventas</span>
-        </div>
-        <div class="menu-item" routerLink="/historial-ventas" routerLinkActive="active">
-            <span>📜 Historial Ventas</span>
-        </div>
-        <div class="menu-item" routerLink="/admin-dashboard" routerLinkActive="active">
-            <span>🔍 Buscar Producto</span>
-        </div>
-        <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
-            <span>🔔 Alertas</span>
-        </div>
-        <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
-            <span>👤 Perfil</span>
-        </div>
-        <div class="menu-item logout-btn" (click)="logoutService.openModal()">
-            <span>📤 Cerrar sesión</span>
-        </div>
-    </nav>
+    <div
+      class="menu-item"
+      routerLink="/movimientos-inventario"
+      routerLinkActive="active"
+    >
+      <span>🔄 Mov. Inventario</span>
+    </div>
+    <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
+      <span>📊 Reportes</span>
+    </div>
+    <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
+      <span>💰 Ventas</span>
+    </div>
+    <div
+      class="menu-item"
+      routerLink="/historial-ventas"
+      routerLinkActive="active"
+    >
+      <span>📜 Historial Ventas</span>
+    </div>
+    <div
+      class="menu-item"
+      routerLink="/admin-dashboard"
+      routerLinkActive="active"
+    >
+      <span>🔍 Buscar Producto</span>
+    </div>
+    <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
+      <span>🔔 Alertas</span>
+    </div>
+    <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
+      <span>👤 Perfil</span>
+    </div>
+    <div class="menu-item logout-btn" (click)="logoutService.openModal()">
+      <span>📤 Cerrar sesión</span>
+    </div>
+  </nav>
 </div>
 
 <div class="main-content">
-    <div class="header">
-        <h1>Gestión de Reportes</h1>
+  <div class="header">
+    <h1>Gestión de Reportes</h1>
+  </div>
+
+  <!-- Contenedor de reportes con scroll -->
+  <div class="report-container">
+    <!-- Sección de reportes de ventas -->
+    <div class="report-section">
+      <h2>Reportes de Ventas</h2>
+      <ul>
+        <li *ngFor="let reporte of reportesVentas">
+          <span>{{ reporte.nombre }}</span>
+          <button class="download-btn" (click)="descargarReporte(reporte)">
+            Descargar
+          </button>
+          <button
+            class="delete-btn"
+            (click)="eliminarReporte(reporte.idReporte)"
+          >
+            Eliminar
+          </button>
+        </li>
+      </ul>
     </div>
 
-    <!-- Contenedor de reportes con scroll -->
-    <div class="report-container">
-        <!-- Sección de reportes de ventas -->
-        <div class="report-section">
-            <h2>Reportes de Ventas</h2>
-            <ul>
-                <li *ngFor="let reporte of reportesVentas">
-                    <span>{{ reporte.nombre }}</span>
-                    <button class="download-btn" (click)="descargarReporte(reporte)">Descargar</button>
-                    <button class="delete-btn" (click)="eliminarReporte(reporte.idReporte)">Eliminar</button>
-                </li>
-            </ul>
-        </div>
+    <!-- Sección de reportes de inventario -->
+    <div class="report-section">
+      <h2>Reportes de Inventario</h2>
+      <ul>
+        <li *ngFor="let reporte of reportesInventario">
+          <span>{{ reporte.nombre }}</span>
+          <button class="download-btn" (click)="descargarReporte(reporte)">
+            Descargar
+          </button>
+          <button
+            class="delete-btn"
+            (click)="eliminarReporte(reporte.idReporte)"
+          >
+            Eliminar
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-        <!-- Sección de reportes de inventario -->
-        <div class="report-section">
-            <h2>Reportes de Inventario</h2>
-            <ul>
-                <li *ngFor="let reporte of reportesInventario">
-                    <span>{{ reporte.nombre }}</span>
-                    <button class="download-btn" (click)="descargarReporte(reporte)">Descargar</button>
-                    <button class="delete-btn" (click)="eliminarReporte(reporte.idReporte)">Eliminar</button>
-                </li>
-            </ul>
-        </div>
+  <div class="report-options">
+    <h2>Generar Reporte</h2>
+    <div class="report-selection">
+      <label>
+        <input
+          type="radio"
+          name="reportType"
+          value="ventas"
+          [(ngModel)]="tipoReporte"
+        />
+        Reporte de Ventas
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="reportType"
+          value="inventario"
+          [(ngModel)]="tipoReporte"
+        />
+        Reporte de Inventario
+      </label>
     </div>
 
-    <div class="report-options">
-        <h2>Generar Reporte</h2>
-        <div class="report-selection">
-            <label>
-                <input type="radio" name="reportType" value="ventas" [(ngModel)]="tipoReporte" />
-                Reporte de Ventas
-            </label>
-            <label>
-                <input type="radio" name="reportType" value="inventario" [(ngModel)]="tipoReporte" />
-                Reporte de Inventario
-            </label>
-        </div>
-    
-        <h2>Rango de Fechas</h2>
-        <div class="date-selection">
-            <label for="startDate">Inicio:</label>
-            <input type="date" id="startDate" [(ngModel)]="fechaInicio" />
-            <label for="endDate">Fin:</label>
-            <input type="date" id="endDate" [(ngModel)]="fechaFin" />
-        </div>
-    
-        <button class="generate-btn" (click)="generarReporte()">Generar Reporte</button>
+    <h2>Rango de Fechas</h2>
+    <div class="date-selection">
+      <label for="startDate">Inicio:</label>
+      <input
+        type="date"
+        id="startDate"
+        [(ngModel)]="fechaInicio"
+        [attr.max]="fechaActual"
+        [attr.min]="fechaMinima"
+      />
+
+      <label for="endDate">Fin:</label>
+      <input
+        type="date"
+        id="endDate"
+        [(ngModel)]="fechaFin"
+        [attr.max]="fechaActual"
+      />
     </div>
+
+    <button class="generate-btn" (click)="generarReporte()">
+      Generar Reporte
+    </button>
+  </div>
 </div>

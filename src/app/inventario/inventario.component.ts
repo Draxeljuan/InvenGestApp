@@ -4,6 +4,7 @@ import { LogoutService } from '../logout.service';
 import { Router, RouterModule, RouterLinkActive } from '@angular/router';
 import { InventarioService } from '../services/inventario.service';
 import { FormsModule } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   standalone: true,
@@ -22,6 +23,7 @@ export class InventarioComponent implements OnInit {
   productoActualizado: any = null;
   productoDescontinuado: string = '';
   fechaIngresoInvalida: boolean = false;
+  fechaIngresoInvalidaUpdate: boolean = false;
 
   /** Gestión de Categorías */
   categorias: any[] = [];
@@ -36,6 +38,9 @@ export class InventarioComponent implements OnInit {
   productosFiltrados: any[] = [];
 
   productoSeleccionado: any = null; // Para almacenar el producto seleccionado
+
+  /** Confirmacion descontinuar */
+  mostrarConfirmacionFinal: boolean = false;
 
   constructor(
     public logoutService: LogoutService,
@@ -62,9 +67,15 @@ export class InventarioComponent implements OnInit {
   cargarCategorias(): void {
     this.inventarioService.obtenerCategorias().subscribe({
       next: (data) => this.categorias = data,
-      error: (err) => console.error("Error al obtener categorías:", err)
+      error: (err) => {
+        console.error(" Error al obtener categorías", err);
+        if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+          alert("⚠ No se pudo obtener las categorías. Contacte con el Administrador del Sistema.");
+        }
+      }
     });
   }
+
 
   /** Crear Nueva Categoría */
   crearNuevaCategoria(): void {
@@ -75,13 +86,20 @@ export class InventarioComponent implements OnInit {
 
     this.inventarioService.crearNuevaCategoria(this.nuevaCategoria).subscribe({
       next: () => {
-        alert("Categoría creada correctamente!");
+        alert("✅ Categoría creada correctamente!");
         this.cargarCategorias();
         this.nuevaCategoria = { nombre: '', descripcion: '' };
       },
-      error: (err) => console.error("Error al registrar la nueva categoría:", err)
+      error: (err) => {
+        console.error(" Error al registrar la nueva categoría", err);
+
+        if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+          alert("⚠ No se pudo registrar la categoría. Verifique su conexión.");
+        }
+      }
     });
   }
+
 
   /** Cargar Estados */
   cargarEstados(): void {
@@ -116,6 +134,15 @@ export class InventarioComponent implements OnInit {
       return;
     }
 
+    // Validar costos
+    const costo = this.nuevoProducto.costoCompra;
+    const venta = this.nuevoProducto.precioVenta;
+
+    if (venta - costo < 100) {
+      alert("⚠ El precio de venta debe ser al menos $100 mayor que el costo de compra.");
+      return;
+    }
+
     // Validación de fecha de ingreso
     const fechaSeleccionada = new Date(this.nuevoProducto.fechaIngreso);
     const fechaActual = new Date();
@@ -125,17 +152,23 @@ export class InventarioComponent implements OnInit {
       return;
     }
 
-
     // Si las validaciones pasan, registrar el producto
     this.inventarioService.registrarProducto(this.nuevoProducto).subscribe({
       next: () => {
         alert("✅ Producto registrado correctamente!");
         this.nuevoProducto = {};
       },
-      error: (err) => console.error("⚠ Error al registrar producto:", err)
+      error: (err) => {
+        console.error(" Error al registrar producto", err);
+
+        if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+          alert("⚠ No se pudo registrar el producto. Verifique su conexión.");
+        }
+      }
     });
   }
 
+  /** Validar Fecha de Ingreso */
   validarFechaIngreso(): void {
     const fechaSeleccionada = new Date(this.nuevoProducto.fechaIngreso);
     const fechaActual = new Date();
@@ -144,22 +177,54 @@ export class InventarioComponent implements OnInit {
     this.fechaIngresoInvalida = fechaSeleccionada > fechaActual;
   }
 
+  /** Validar Fechas Ingreso en Actualizacion */
+  validarFechaIngresoUpdate(): void {
+    const fechaSeleccionada = new Date(this.productoActualizado.fechaIngreso);
+    const fechaActual = new Date();
+
+    // Determina si la fecha seleccionada es mayor a la fecha actual
+    this.fechaIngresoInvalidaUpdate = fechaSeleccionada > fechaActual;
+  }
+
+  /** Ver diferencia de precios de venta y compra si es valida o no en registro */
+  get diferenciaInvalida(): boolean {
+    const venta = this.nuevoProducto.precioVenta;
+    const costo = this.nuevoProducto.costoCompra;
+    return venta !== null && costo !== null && (venta - costo) < 100;
+  }
+
+  /** Ver diferencia de precios de venta y compra si es valida o no en Actualizacion */
+  get diferenciaInvalidaUpdate(): boolean {
+    const venta = this.productoActualizado.precioVenta;
+    const costo = this.productoActualizado.costoCompra;
+    return venta !== null && costo !== null && (venta - costo) < 100;
+  }
+
+
   /** Buscar Producto por ID o Nombre */
   buscarProducto(): void {
     if (this.terminoBusqueda.trim().length < 3) {
       this.productosFiltrados = [];
-      return; // Solo filtra si la búsqueda tiene al menos 3 caracteres
+      return; // 🔥 Solo filtra si la búsqueda tiene al menos 3 caracteres
     }
 
-    this.inventarioService.buscarProductosPorNombre(this.terminoBusqueda).subscribe({
-      next: (productos) => {
-        this.productosFiltrados = productos.filter(producto =>
-          producto.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
-          producto.idProducto.includes(this.terminoBusqueda)
-        ).slice(0, 10); // Limita la cantidad máxima de productos visibles
-      },
-      error: (err) => console.error("Error al buscar productos:", err)
-    });
+    this.inventarioService.buscarProductosPorNombre(this.terminoBusqueda)
+      .pipe(debounceTime(300)) // Evita llamadas constantes al backend
+      .subscribe({
+        next: (productos) => {
+          this.productosFiltrados = productos.filter(producto =>
+            producto.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+            producto.idProducto.includes(this.terminoBusqueda)
+          ).slice(0, 10); // Limita la cantidad máxima de productos visibles
+        },
+        error: (err) => {
+          console.error("❌ Error al buscar productos", err);
+
+          if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+            alert("⚠ No se pudo obtener los productos. Verifique su conexión.");
+          }
+        }
+      });
   }
 
 
@@ -172,15 +237,25 @@ export class InventarioComponent implements OnInit {
 
   /** Actualizar Producto */
   actualizarProducto(): void {
-    if (!this.productoActualizado) return;
+    if (!this.productoActualizado) {
+      alert("⚠ Debes seleccionar un producto para actualizar.");
+      return;
+    }
 
     this.inventarioService.actualizarProducto(this.productoActualizado.idProducto, this.productoActualizado).subscribe({
       next: () => {
-        alert("Producto actualizado correctamente!");
+        alert("✅ Producto actualizado correctamente!");
       },
-      error: (err) => console.error("Error al actualizar producto:", err)
+      error: (err) => {
+        console.error(" Error al actualizar producto", err);
+
+        if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+          alert("⚠ No se pudo actualizar el producto. Verifique su conexión.");
+        }
+      }
     });
   }
+
 
   /** Descontinuar Producto */
   descontinuarProducto(): void {
@@ -191,20 +266,34 @@ export class InventarioComponent implements OnInit {
 
     this.inventarioService.descontinuarProducto(this.productoSeleccionado.idProducto).subscribe({
       next: () => {
-        alert(`Producto "${this.productoSeleccionado.nombre}" marcado como descontinuado correctamente!`);
+        alert(`✅ Producto "${this.productoSeleccionado.nombre}" marcado como descontinuado correctamente!`);
         this.productoSeleccionado = null;
       },
       error: (err) => {
-        alert("Error al descontinuar el producto. Por favor, contacte al administrador del sistema.");
-        console.error("Error en la descontinuación:", err);
+        console.error(" Error al descontinuar producto", err);
+
+        if (!err.message.includes("4081 (DB_TIMEOUT)")) {
+          alert("⚠ No se pudo descontinuar el producto. Verifique su conexión.");
+        }
       }
     });
   }
+
 
   /** Seleccionar Producto para Descontinuar */
   seleccionarProductoParaDescontinuar(producto: any): void {
     this.productoSeleccionado = { ...producto };
     this.productosFiltrados = [];
+  }
+
+
+  /** Mostrar Confirmación de Descontinuación */
+  mostrarConfirmacionDescontinuacion(): void {
+    this.mostrarConfirmacionFinal = true;
+  }
+  /** Cancelar Confirmación de Descontinuación */
+  cancelarConfirmacionDescontinuacion(): void {
+    this.mostrarConfirmacionFinal = false;
   }
 
   /** Confirma Descontinuacion */

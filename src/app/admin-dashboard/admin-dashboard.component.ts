@@ -15,16 +15,26 @@ import { CommonModule } from '@angular/common';
 export class AdminDashboardComponent implements OnInit {
   productos: any[] = []; // Lista de productos obtenidos del backend
   filtro: string = ''; // Variable para la barra de búsqueda
+  filtroValido: boolean = true; // Variable para validar el filtro
 
   constructor(
     public logoutService: LogoutService,
     public router: Router,
     private productoService: ProductoService // Inyectar ProductoService para obtener los productos
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarProductos(); // Llamar la función al iniciar el componente
   }
+
+  // Función para validar el filtro de búsqueda
+  validarFiltro(): void {
+    const regex = /^[a-zA-Z0-9]*$/;
+    this.filtroValido = regex.test(this.filtro);
+  }
+
+
+  // Función para cargar los productos desde el backend
 
   cargarProductos(): void {
     this.productoService.obtenerProductos().subscribe({

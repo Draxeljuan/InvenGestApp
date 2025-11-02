@@ -1,11 +1,26 @@
+/* Reset de estilos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif; /* Actualizamos la tipografía */
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    background-color: #eef2f3; /* Color de fondo suave */
+}
+
 /* Barra lateral */
 .sidebar {
-    width: 230px;
+    width: 230px; /* Tamaño ajustado para mantener proporción */
     background-color: #1e293b;
     color: white;
     padding: 20px;
-    height: 100vh;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    height: 150vh; /* Ocupa toda la pantalla */
 }
 
 .logo h2 {
@@ -21,7 +36,7 @@
     margin-top: 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 10px; /* Espaciado entre elementos */
 }
 
 .menu-item {
@@ -29,17 +44,18 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    gap: 10px;
     font-size: 1.1rem;
-    border-radius: 6px;
     transition: all 0.3s;
+    border-radius: 6px;
 }
 
 .menu-item:hover {
-    background-color: #475569;
+    background-color: #475569; /* Efecto hover */
 }
 
 .menu-item.active {
-    background-color: #007bff;
+    background-color: #007bff; /* Resaltado del elemento activo */
     color: white;
 }
 

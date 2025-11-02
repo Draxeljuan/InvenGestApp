@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -9,23 +10,43 @@ import { Router } from '@angular/router';
 export class AuthService {
   private apiUrl = 'http://localhost:8080/auth/login';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(nombreUsuario: string, contrasena: string): Observable<{ token: string; roles: string[] }> {
     const body = { nombreUsuario, contrasena };
     return this.http.post<{ token: string; roles: string[] }>(this.apiUrl, body).pipe(
+      timeout(7000),  // Aplicamos timeout antes de manejar errores
       tap(response => {
         const token = response.token;
-        if (token && token.includes(".")) { // 🔥 Validar que el token tenga el formato correcto
-          console.log("Token recibido correctamente:", token);
+        if (token && token.includes(".")) {
+          console.log(" Token recibido correctamente:", token);
           this.guardarToken(token);
           this.guardarRole(token);
         } else {
-          console.error("Error: La respuesta del backend no contiene un token válido.", response);
+          console.error(" Error: La respuesta del backend no contiene un token válido.", response);
         }
+      }),
+      catchError(err => {
+        console.error(" Error en autenticación:", err);
+
+        if (err.name === 'TimeoutError') {
+          // Detectamos timeout como un error independiente
+          setTimeout(() => {
+            alert("⏳ La autenticación está tardando más de lo esperado...");
+          }, 5000);
+
+          setTimeout(() => {
+            alert("⚠ Error : La base de datos no respondió. Recarga la pagina o contacta con un Administrador del Sistema. Código de error: 4081 (DB_TIMEOUT)");
+          }, 10000);
+
+          return throwError(() => new Error("Código de error: 4081 (DB_TIMEOUT)"));
+        }
+
+        return throwError(() => err);
       })
     );
   }
+
 
   guardarToken(token: string): void {
     localStorage.setItem('jwtToken', token); // Asegurar que solo se guarda la cadena JWT

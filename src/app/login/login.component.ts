@@ -21,15 +21,25 @@ export class LoginComponent {
   onSubmit(): void {
     this.authService.login(this.nombreUsuario, this.contrasena).subscribe(
       response => {
-        // Guardar el token en el almacenamiento local
         this.authService.guardarToken(response.token);
-        // Redirigir a la página principal después de iniciar sesión
         this.router.navigate(['/admin-dashboard']);
       },
       error => {
-        console.error('Error al iniciar sesión', error);
-        alert('Error al iniciar sesión. Verifique sus credenciales.');
+        console.error(" Error recibido en login component", error);
+
+        if (error.status === 429) {
+          const mensajeBloqueo = error.error?.message || "Demasiados intentos fallidos. Intente nuevamente más tarde.";
+          alert(mensajeBloqueo);
+          return;
+        }
+
+        if (error.message.includes("4081 (DB_TIMEOUT)")) {
+          return; // No mostramos alertas de timeout aquí, ya se manejan en `auth.service.ts`
+        }
+
+        alert("⚠ Error al iniciar sesión. Verifique sus credenciales. Codigo error 404 UNAUTHORIZED");
       }
     );
   }
+
 }

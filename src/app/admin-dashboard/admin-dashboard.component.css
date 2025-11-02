@@ -3,36 +3,40 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif; /* Actualizamos la tipografía */
 }
 
 body {
     display: flex;
     min-height: 100vh;
-    background-color: #eef2f3; /* Color más suave para la página */
+    background-color: #eef2f3; /* Color de fondo suave */
 }
 
 /* Barra lateral */
 .sidebar {
-    width: 230px; /* Tamaño ajustado para mejor proporción */
+    width: 230px; /* Tamaño ajustado para mantener proporción */
     background-color: #1e293b;
     color: white;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Ocupa toda la pantalla */
+    height: 150vh; /* Ocupa toda la pantalla */
 }
 
 .logo h2 {
-    text-align: center;
     font-size: 1.8rem;
+    text-align: center;
     margin-bottom: 15px;
-    border-bottom: 2px solid #334155;
+    border-bottom: 2px solid #34495e;
     padding-bottom: 10px;
+    color: #ffffff;
 }
 
 .menu {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espaciado entre elementos */
 }
 
 .menu-item {
@@ -47,11 +51,11 @@ body {
 }
 
 .menu-item:hover {
-    background-color: #475569;
+    background-color: #475569; /* Efecto hover */
 }
 
 .menu-item.active {
-    background-color: #007bff;
+    background-color: #007bff; /* Resaltado del elemento activo */
     color: white;
 }
 
@@ -131,6 +135,20 @@ body {
     gap: 5px;
 }
 
+/* Busqueda invalida */
+.invalido {
+  border: 1px solid red;
+  color: red;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 4px;
+  display: block;
+}
+
+
 /* Iconos para mejorar la visualización */
 .inventory-item p strong::before {
     
@@ -149,6 +167,8 @@ body {
 .inventory-item[data-estado="3"] {
     border-left: 5px solid #dc3545; /* Rojo - Descontinuado */
 }
+
+
 
 :host {
     display: flex;
