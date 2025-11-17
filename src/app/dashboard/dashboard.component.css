@@ -18,7 +18,7 @@ body {
     background-color: #eef2f3;
 }
 
-/* Barra lateral - Misma que tu diseño actual */
+/* Barra lateral - CON SCROLL ARREGLADO */
 .sidebar {
     width: 230px;
     background-color: #1e293b;
@@ -26,10 +26,31 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
     position: fixed;
     left: 0;
     top: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+}
+
+/* Personalizar scrollbar del sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
 }
 
 .logo h2 {
@@ -261,6 +282,12 @@ body {
     font-weight: 500;
 }
 
+.bar-sublabel {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 3px;
+}
+
 /* Top productos */
 .top-productos {
     display: flex;
@@ -377,6 +404,10 @@ body {
     border-left-color: #6c757d;
 }
 
+.movimiento-tipo {
+    min-width: 80px;
+}
+
 .tipo-badge {
     padding: 5px 12px;
     border-radius: 5px;
@@ -397,6 +428,10 @@ body {
 .movimiento-salida .tipo-badge {
     background-color: #ffc107;
     color: #333;
+}
+
+.movimiento-ajuste .tipo-badge {
+    background-color: #6c757d;
 }
 
 .movimiento-detalles {
@@ -447,5 +482,23 @@ body {
     .header {
         flex-direction: column;
         gap: 15px;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2.5rem;
     }
 }

@@ -1,0 +1,361 @@
+<div class="sidebar">
+  <div class="logo">
+    <h2>InvenGest Admin</h2>
+  </div>
+  <nav class="menu">
+    <div class="menu-item" routerLink="/dashboard" routerLinkActive="active">
+      <span>📊 Dashboard</span>
+    </div>
+    <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
+      <span>📦 Inventario</span>
+    </div>
+    <div class="menu-item" routerLink="/movimientos-inventario" routerLinkActive="active">
+      <span>🔄 Mov. Inventario</span>
+    </div>
+    <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
+      <span>📊 Reportes</span>
+    </div>
+    <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
+      <span>💰 Ventas</span>
+    </div>
+    <div class="menu-item" routerLink="/historial-ventas" routerLinkActive="active">
+      <span>📜 Historial Ventas</span>
+    </div>
+    <div class="menu-item" routerLink="/buscar-producto" routerLinkActive="active">
+      <span>🔍 Buscar Producto</span>
+    </div>
+    <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
+      <span>🔔 Alertas</span>
+    </div>
+    <div class="menu-item" routerLink="/backups" routerLinkActive="active">
+      <span>💾 Gestión Backups</span>
+    </div>
+    <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
+      <span>👤 Perfil</span>
+    </div>
+    <div class="menu-item logout-btn" (click)="logoutService.openModal()">
+      <span>📤 Cerrar sesión</span>
+    </div>
+  </nav>
+</div>
+
+<div class="main-content">
+  <div class="header">
+    <h1>💾 Gestión de Backups</h1>
+    <div class="fecha-actual">
+      📅 {{ fechaActual | date:'dd/MM/yyyy' }}
+    </div>
+  </div>
+
+  <!-- Advertencia importante -->
+  <div class="alert-warning">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-content">
+      <h3>¡Atención! Acción Importante</h3>
+      <p>Restaurar un backup reemplazará <strong>todos los datos actuales</strong> del sistema. Asegúrate de tener un backup reciente antes de continuar.</p>
+    </div>
+  </div>
+
+  <!-- Tarjetas de estadísticas -->
+  <div class="stats-cards">
+    <div class="stat-card info-card">
+      <div class="stat-icon">📁</div>
+      <div class="stat-info">
+        <h3>Backups Disponibles</h3>
+        <p class="stat-value">{{ backupsDisponibles }}</p>
+        <span class="stat-label">Archivos en servidor</span>
+      </div>
+    </div>
+
+    <div class="stat-card success-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <h3>Última Restauración</h3>
+        <p class="stat-value">{{ ultimaRestauracion || 'Nunca' }}</p>
+        <span class="stat-label">Fecha</span>
+      </div>
+    </div>
+
+    
+  </div>
+
+  <!-- Contenedor principal -->
+  <div class="backup-container">
+    
+    <!-- Sección de creación de backup -->
+    <div class="create-backup-section" *ngIf="!archivoSeleccionado && !procesandoBackup && !creandoBackup">
+      <div class="create-backup-card">
+        <div class="create-header">
+          <h2>📥 Crear Nuevo Backup</h2>
+          <p>Genera un respaldo completo de tu base de datos actual</p>
+        </div>
+        
+        
+
+        <button class="btn-create-backup" (click)="crearNuevoBackup()" [disabled]="creandoBackup">
+          <span *ngIf="!creandoBackup"> Crear Backup Ahora</span>
+          <span *ngIf="creandoBackup"> Creando Backup...</span>
+        </button>
+
+        <p class="create-note">💡 Se recomienda crear backups regularmente, especialmente antes de realizar cambios importantes</p>
+      </div>
+    </div>
+
+    <!-- Proceso de creación de backup -->
+    <div class="processing-section" *ngIf="creandoBackup">
+      <div class="processing-card">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+        </div>
+        <h2>🔄 Creando Backup...</h2>
+        <p class="processing-message">Por favor espera mientras se genera el respaldo de tu base de datos</p>
+        
+        <div class="process-info">
+          <p>⏱️ Este proceso puede tomar algunos segundos...</p>
+          <p>📦 Se están respaldando todos los datos del sistema</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultado exitoso de creación -->
+    <div class="result-section success" *ngIf="backupCreadoExitoso">
+      <div class="result-card">
+        <div class="result-icon success-icon">✅</div>
+        <h2>¡Backup Creado Exitosamente!</h2>
+        <p>El respaldo de tu base de datos se ha generado correctamente</p>
+        
+        <div class="backup-created-info" *ngIf="backupCreadoInfo">
+          <div class="info-row">
+            <span class="info-label">📁 Archivo:</span>
+            <span class="info-value">{{ backupCreadoInfo.fileName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">📍 Ubicación:</span>
+            <span class="info-value">{{ backupCreadoInfo.filePath }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">🕐 Fecha:</span>
+            <span class="info-value">{{ backupCreadoInfo.createdDate }}</span>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-primary" (click)="volverAInicio()">
+            💾 Crear Otro Backup
+          </button>
+          <button class="btn-secondary" (click)="mostrarListaBackups()">
+            📋 Ver Todos los Backups
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zona de carga de archivos / Lista de backups -->
+    <div class="upload-section" *ngIf="!archivoSeleccionado && !procesandoBackup && !creandoBackup && !backupCreadoExitoso">
+      
+      <!-- Lista de backups recientes -->
+      <div class="backups-recientes">
+        <div class="backups-header">
+          <h3>📋 Backups Disponibles en el Servidor</h3>
+          <button class="btn-refresh" (click)="cargarBackupsRecientes()" [disabled]="cargandoBackups">
+            <span *ngIf="!cargandoBackups"> Actualizar</span>
+            <span *ngIf="cargandoBackups"> Cargando...</span>
+          </button>
+        </div>
+
+        <div *ngIf="cargandoBackups" class="loading-backups">
+          <div class="small-spinner"></div>
+          <p>Cargando backups disponibles...</p>
+        </div>
+
+        <div *ngIf="!cargandoBackups && backupsRecientes.length === 0" class="no-backups">
+          <span class="no-backups-icon">📭</span>
+          <p>No hay backups disponibles en el servidor</p>
+          <p class="no-backups-hint">Crea tu primer backup para comenzar</p>
+        </div>
+
+        <div class="backup-list" *ngIf="!cargandoBackups && backupsRecientes.length > 0">
+          <div class="backup-item" *ngFor="let backup of backupsRecientes" (click)="seleccionarBackupServidor(backup)">
+            <div class="backup-icon">📁</div>
+            <div class="backup-info">
+              <span class="backup-name">{{ backup.name }}</span>
+              <span class="backup-date">{{ backup.createdDate | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <div class="backup-size">{{ backup.sizeMB }} MB</div>
+            <button class="btn-select">Seleccionar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista previa del archivo seleccionado -->
+    <div class="preview-section" *ngIf="archivoSeleccionado && !procesandoBackup">
+      <div class="preview-card">
+        <div class="preview-header">
+          <h2>📋 Información del Backup</h2>
+          <button class="btn-close" (click)="cancelarSeleccion()">✕</button>
+        </div>
+
+        <div class="file-details">
+          <div class="detail-row">
+            <span class="detail-label">Archivo:</span>
+            <span class="detail-value">{{ archivoSeleccionado.name }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Tamaño:</span>
+            <span class="detail-value">{{ formatearTamano(archivoSeleccionado.size) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Tipo:</span>
+            <span class="detail-value">{{ archivoSeleccionado.type || 'application/sql' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Fecha de modificación:</span>
+            <span class="detail-value">{{ archivoSeleccionado.lastModified | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+
+        <!-- Checklist de confirmación -->
+        <div class="confirmation-checklist">
+          <h3>✓ Confirma que entiendes:</h3>
+          <label class="checkbox-item">
+            <input type="checkbox" [(ngModel)]="confirmaciones.backup">
+            <span>He creado un backup reciente de los datos actuales</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" [(ngModel)]="confirmaciones.perdida">
+            <span>Entiendo que los datos actuales serán reemplazados</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" [(ngModel)]="confirmaciones.irreversible">
+            <span>Confirmo que esta acción no se puede deshacer fácilmente</span>
+          </label>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <button class="btn-cancel" (click)="cancelarSeleccion()">
+            ❌ Cancelar
+          </button>
+          <button class="btn-restore" 
+                  [disabled]="!todasConfirmaciones()"
+                  (click)="iniciarRestauracion()">
+            💾 Restaurar Backup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proceso de restauración -->
+    <div class="processing-section" *ngIf="procesandoBackup">
+      <div class="processing-card">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+        </div>
+        <h2>🔄 Restaurando Backup...</h2>
+        <p class="processing-message">{{ mensajeProceso }}</p>
+        
+        <!-- Barra de progreso -->
+        <div class="progress-container">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" [style.width.%]="progreso"></div>
+          </div>
+          <span class="progress-text">{{ progreso }}% completado</span>
+        </div>
+
+        <!-- Pasos del proceso -->
+        <div class="process-steps">
+          <div class="step" [class.completed]="progreso >= 20" [class.active]="progreso < 20">
+            <span class="step-icon">{{ progreso >= 20 ? '✅' : '⏳' }}</span>
+            <span>Validando archivo</span>
+          </div>
+          <div class="step" [class.completed]="progreso >= 40" [class.active]="progreso >= 20 && progreso < 40">
+            <span class="step-icon">{{ progreso >= 40 ? '✅' : '⏳' }}</span>
+            <span>Extrayendo datos</span>
+          </div>
+          <div class="step" [class.completed]="progreso >= 60" [class.active]="progreso >= 40 && progreso < 60">
+            <span class="step-icon">{{ progreso >= 60 ? '✅' : '⏳' }}</span>
+            <span>Limpiando base de datos</span>
+          </div>
+          <div class="step" [class.completed]="progreso >= 80" [class.active]="progreso >= 60 && progreso < 80">
+            <span class="step-icon">{{ progreso >= 80 ? '✅' : '⏳' }}</span>
+            <span>Restaurando información</span>
+          </div>
+          <div class="step" [class.completed]="progreso >= 100" [class.active]="progreso >= 80 && progreso < 100">
+            <span class="step-icon">{{ progreso >= 100 ? '✅' : '⏳' }}</span>
+            <span>Verificando integridad</span>
+          </div>
+        </div>
+
+        <p class="warning-text">⚠️ No cierres esta ventana hasta que el proceso termine</p>
+      </div>
+    </div>
+
+    <!-- Resultado exitoso -->
+    <div class="result-section success" *ngIf="restauracionExitosa">
+      <div class="result-card">
+        <div class="result-icon success-icon">✅</div>
+        <h2>¡Restauración Completada!</h2>
+        <p>El backup se ha restaurado correctamente. El sistema está listo para usar.</p>
+
+        <div class="result-actions">
+          <button class="btn-primary" routerLink="/dashboard">
+            📊 Ir al Dashboard
+          </button>
+          <button class="btn-secondary" (click)="resetearFormulario()">
+            💾 Restaurar Otro Backup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultado con error -->
+    <div class="result-section error" *ngIf="errorRestauracion">
+      <div class="result-card">
+        <div class="result-icon error-icon">❌</div>
+        <h2>Error en la Restauración</h2>
+        <p class="error-message">{{ mensajeError }}</p>
+        
+        <div class="error-details">
+          <h4>Posibles causas:</h4>
+          <ul>
+            <li>El archivo de backup está corrupto o incompleto</li>
+            <li>El formato del archivo no es compatible</li>
+            <li>No hay suficiente espacio en el servidor</li>
+            <li>Problemas de conexión durante el proceso</li>
+          </ul>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-primary" (click)="resetearFormulario()">
+            🔄 Intentar Nuevamente
+          </button>
+          <button class="btn-secondary" routerLink="/dashboard">
+            📊 Volver al Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Información adicional -->
+  <div class="info-panel">
+    <h3>Información Importante</h3>
+    <div class="info-content">
+      <div class="info-item">
+        <strong>Antes de restaurar:</strong>
+        <p>Crea un backup actual de tu sistema para poder volver atrás si es necesario.</p>
+      </div>
+      <div class="info-item">
+        <strong>Durante el proceso:</strong>
+        <p>No cierres el navegador ni actualices la página. La restauración no deberia tardar mucho...</p>
+      </div>
+      <div class="info-item">
+        <strong>Después de restaurar:</strong>
+        <p>Verifica que todos los datos se hayan restaurado correctamente antes de continuar operando.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
