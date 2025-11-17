@@ -4,9 +4,10 @@ import { Observable } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
+
 @Injectable({
-  providedIn: 'root'
-})
+  providedIn: 'root' 
+})    
 export class VentaService {
   private apiUrl = 'http://localhost:8080/ventas'; // URL de ventas
   private facturaUrl = 'http://localhost:8080/facturas'; // URL de facturación
@@ -24,6 +25,22 @@ export class VentaService {
   obtenerVenta(idVenta: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${idVenta}`, this.getHeaders());
   }
+
+  /** Obtener ventas del dia */
+  obtenerVentasHoy(): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/hoy`, this.getHeaders());
+  }
+
+  /** Obtener ventas de la ultima semana */
+  obtenerVentasSemana(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/semana`, this.getHeaders());
+  }
+
+  /** Obtener productos Top */
+  obtenerProductosTop(limite: number, dias: number = 30): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/top?limite=${limite}&dias=${dias}`, this.getHeaders());
+  }
+
 
   /** Crear una nueva venta */
   crearVenta(venta: any): Observable<any> {

@@ -20,7 +20,7 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    height: 150vh; /* Ocupa toda la pantalla */
+    height: 200vh; /* Ocupa toda la pantalla */
 }
 
 .logo h2 {

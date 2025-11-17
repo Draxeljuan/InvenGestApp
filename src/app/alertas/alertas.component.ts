@@ -36,7 +36,7 @@ export class AlertasComponent implements OnInit {
 
   cargarAlertas(): void {
     this.alertaService.obtenerAlertasConProducto().subscribe(alertas => {
-      console.log("✅ Alertas activas obtenidas con nombres de productos y tipos:", alertas);
+      console.log(" Alertas activas obtenidas con nombres de productos y tipos:", alertas);
 
       this.alertas = alertas.map(alerta => ({
         ...alerta,

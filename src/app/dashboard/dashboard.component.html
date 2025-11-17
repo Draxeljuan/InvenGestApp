@@ -1,0 +1,161 @@
+<div class="sidebar">
+  <div class="logo">
+    <h2>InvenGest Admin</h2>
+  </div>
+  <nav class="menu">
+    <div class="menu-item" routerLink="/dashboard" routerLinkActive="active">
+      <span>📊 Dashboard</span>
+    </div>
+    <div class="menu-item" routerLink="/inventario" routerLinkActive="active">
+      <span>📦 Inventario</span>
+    </div>
+    <div class="menu-item" routerLink="/movimientos-inventario" routerLinkActive="active">
+      <span>🔄 Mov. Inventario</span>
+    </div>
+    <div class="menu-item" routerLink="/reportes" routerLinkActive="active">
+      <span>📊 Reportes</span>
+    </div>
+    <div class="menu-item" routerLink="/ventas" routerLinkActive="active">
+      <span>💰 Ventas</span>
+    </div>
+    <div class="menu-item" routerLink="/historial-ventas" routerLinkActive="active">
+      <span>📜 Historial Ventas</span>
+    </div>
+    <div class="menu-item" routerLink="/buscar-producto" routerLinkActive="active">
+      <span>🔍 Buscar Producto</span>
+    </div>
+    <div class="menu-item" routerLink="/alertas" routerLinkActive="active">
+      <span>🔔 Alertas</span>
+    </div>
+    <div class="menu-item" routerLink="/perfil" routerLinkActive="active">
+      <span>👤 Perfil</span>
+    </div>
+    <div class="menu-item logout-btn" (click)="logoutService.openModal()">
+      <span>📤 Cerrar sesión</span>
+    </div>
+  </nav>
+</div>
+
+<div class="main-content">
+  <div class="header">
+    <h1>Dashboard - Vista General</h1>
+    <div class="fecha-actual">
+      📅 {{ fechaActual | date:'dd/MM/yyyy' }}
+    </div>
+  </div>
+
+  <!-- Tarjetas de estadísticas principales -->
+  <div class="stats-cards">
+    <div class="stat-card ventas-card">
+      <div class="stat-icon">💰</div>
+      <div class="stat-info">
+        <h3>Ventas del Día</h3>
+        <p class="stat-value">${{ ventasHoy | number:'1.0-0' }}</p>
+        <span class="stat-label">Total acumulado</span>
+      </div>
+    </div>
+
+    <div class="stat-card productos-card">
+      <div class="stat-icon">📦</div>
+      <div class="stat-info">
+        <h3>Productos Vendidos</h3>
+        <p class="stat-value">{{ productosVendidos }}</p>
+        <span class="stat-label">Unidades</span>
+      </div>
+    </div>
+
+    <div class="stat-card movimientos-card">
+      <div class="stat-icon">🔄</div>
+      <div class="stat-info">
+        <h3>Movimientos</h3>
+        <p class="stat-value">{{ totalMovimientos }}</p>
+        <span class="stat-label">Total del día</span>
+      </div>
+    </div>
+
+    <div class="stat-card alertas-card">
+      <div class="stat-icon">🔔</div>
+      <div class="stat-info">
+        <h3>Alertas de Stock</h3>
+        <p class="stat-value">{{ alertasStock }}</p>
+        <span class="stat-label">Requieren atención</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de gráficos -->
+  <div class="dashboard-grid">
+    
+    <!-- Gráfico de ventas de la semana -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h2>📈 Ventas de la Semana</h2>
+        <span class="card-subtitle">Últimos 7 días</span>
+      </div>
+      <div class="chart-container">
+        <div class="bar-chart">
+          <div class="bar-item" *ngFor="let venta of ventasSemana">
+            <div class="bar-wrapper">
+              <div class="bar-fill" 
+                   [style.height.%]="calcularPorcentajeBarra(venta.total, getMaxVentaSemana())"
+                   [attr.data-value]="venta.total">
+                <span class="bar-value">${{ venta.total / 1000 | number:'1.0-1' }}k</span>
+              </div>
+            </div>
+            <span class="bar-label">{{ formatearFecha(venta.fecha) }}</span>
+            <span class="bar-sublabel">{{ venta.cantidadVentas }} Unidades</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top productos más vendidos -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h2>🏆 Top 5 Productos</h2>
+      </div>
+      <div class="top-productos">
+        <div class="producto-item" *ngFor="let producto of productosTopVentas; let i = index">
+          <div class="producto-rank">{{ i + 1 }}</div>
+          <div class="producto-info">
+            <h4>{{ producto.nombre }}</h4>
+            <div class="producto-stats">
+              <span class="cantidad">{{ producto.cantidad }} unidades</span>
+              <span class="monto">${{ producto.monto | number:'1.0-0' }}</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" 
+                   [style.width.%]="calcularPorcentajeBarra(producto.cantidad, 50)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movimientos recientes -->
+    <div class="dashboard-card movimientos-card-full">
+      <div class="card-header">
+        <h2>🔄 Movimientos Recientes</h2>
+        <span class="card-subtitle">Últimos cambios realizados en el inventario</span>
+      </div>
+      <div class="movimientos-list">
+        <div class="movimiento-item" 
+             *ngFor="let movimiento of movimientosRecientes"
+             [ngClass]="getMovimientoClass(movimiento.tipo)">
+          <div class="movimiento-tipo">
+            <span class="tipo-badge">{{ movimiento.tipo }}</span>
+          </div>
+          <div class="movimiento-detalles">
+            <h4>{{ movimiento.producto }}</h4>
+            <p>Cantidad: {{ movimiento.cantidad }} | {{ movimiento.fecha | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div class="movimiento-usuario">
+            <span>👤 {{ movimiento.usuario }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -10,6 +10,7 @@ import { InventarioComponent } from './inventario/inventario.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { HistorialVentasComponent } from './historial-ventas/historial-ventas.component';
 import { MovimientosInventarioComponent } from './movimientos-inventario/movimientos-inventario.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 export const routes: Routes = [
@@ -24,6 +25,7 @@ export const routes: Routes = [
     { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] }, 
     { path: 'historial-ventas', component: HistorialVentasComponent, canActivate: [authGuard] }, 
     { path: 'movimientos-inventario', component: MovimientosInventarioComponent, canActivate: [authGuard] },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
 
     // Redirección por defecto al login si no se encuentra la ruta
     { path: '', redirectTo: '/login', pathMatch: 'full'},  

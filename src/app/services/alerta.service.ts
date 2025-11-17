@@ -15,9 +15,9 @@ export class AlertaService {
   obtenerAlertas(): Observable<any[]> {
     const headers = this.getHeaders();
     return this.http.get<any[]>(this.apiUrl, { headers }).pipe(
-      tap(alertas => console.log("✅ Alertas activas obtenidas:", alertas)),
+      tap(alertas => console.log("Alertas activas obtenidas:", alertas)),
       catchError(error => {
-        console.error("❌ Error al obtener alertas:", error);
+        console.error("Error al obtener alertas:", error);
         return throwError(() => new Error("No se pudo obtener las alertas"));
       })
     );
@@ -30,11 +30,11 @@ export class AlertaService {
 
   // Llamar al backend para limpiar alertas innecesarias
   limpiarAlertas(): Observable<void> {
-    console.log("🛑 Ejecutando limpieza de alertas en el backend...");
+    console.log(" Ejecutando limpieza de alertas en el backend...");
     return this.http.delete<void>(`${this.apiUrl}/limpiar`, { headers: this.getHeaders() }).pipe(
-      tap(() => console.log("✅ Limpieza de alertas completada!")),
+      tap(() => console.log(" Limpieza de alertas completada!")),
       catchError(error => {
-        console.error("❌ Error en la limpieza de alertas:", error);
+        console.error(" Error en la limpieza de alertas:", error);
         return throwError(() => new Error("No se pudo limpiar las alertas"));
       })
     );
@@ -45,7 +45,7 @@ export class AlertaService {
     console.log(`🔄 Enviando solicitud DELETE al backend con ID: ${id}`);
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }).pipe(
       catchError(error => {
-        console.error(`❌ Error en el DELETE para alerta ID: ${id}`, error);
+        console.error(` Error en el DELETE para alerta ID: ${id}`, error);
         return throwError(() => new Error("No se pudo eliminar la alerta"));
       })
     );

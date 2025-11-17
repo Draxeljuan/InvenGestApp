@@ -26,5 +26,30 @@ export class MovimientoInventarioService {
     return this.http.get<any[]>(this.apiUrl, { headers });
   }
 
+  /** Movimientos del dia */
+  obtenerMovimientosHoy(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/hoy`, this.getHeaders());
+  }
+
+  /** Movimientos recientes */
+  obtenerMovimientosRecientes(limite: number = 5): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/recientes?limite=${limite}`, this.getHeaders());
+  }
+
+  private getHeaders() {
+    const token = localStorage.getItem('jwtToken');
+
+    if (!token || !token.includes('.')) {
+      console.error('Error: El token en localStorage no es válido.');
+      throw new Error('Token inválido');
+    }
+
+    return {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      })
+    };
+  }
+
 
 }
